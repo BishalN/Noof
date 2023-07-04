@@ -1,34 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+"@radix-ui/react-popover": "^1.0.6",
+"@tiptap/core": "^2.0.3",
+"@tiptap/extension-color": "^2.0.3",
+"@tiptap/extension-highlight": "^2.0.3",
+"@tiptap/extension-horizontal-rule": "^2.0.3",
+"@tiptap/extension-image": "^2.0.3",
+"@tiptap/extension-link": "^2.0.0-beta.220",
+"@tiptap/extension-placeholder": "2.0.3",
+"@tiptap/extension-task-item": "^2.0.3",
+"@tiptap/extension-task-list": "^2.0.3",
+"@tiptap/extension-text-style": "^2.0.3",
+"@tiptap/extension-underline": "^2.0.3",
+"@tiptap/pm": "^2.0.0-beta.220",
+"@tiptap/react": "^2.0.3",
+"@tiptap/starter-kit": "^2.0.0-beta.220",
+"@tiptap/suggestion": "^2.0.3",
+"@types/node": "18.15.3",
+"@types/react": "18.0.28",
+"@types/react-dom": "18.0.11",
+"@upstash/ratelimit": "^0.4.3",
+"@vercel/analytics": "^1.0.1",
+"@vercel/blob": "^0.9.2",
+"@vercel/kv": "^0.2.1",
+"ai": "^2.1.3",
+"clsx": "^1.2.1",
+"eslint": "8.36.0",
+"eslint-config-next": "13.2.4",
+"eventsource-parser": "^0.1.0",
+"framer-motion": "^10.12.18",
+"lucide-react": "^0.244.0",
+"next": "13.4.8-canary.14",
+"openai-edge": "^1.0.0",
+"react": "18.2.0",
+"react-dom": "18.2.0",
+"react-markdown": "^8.0.5",
+"sonner": "^0.5.0",
+"tippy.js": "^6.3.7",
+"tiptap-markdown": "^0.8.1",
+"typescript": "4.9.5",
+"use-debounce": "^9.0.3"

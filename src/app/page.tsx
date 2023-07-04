@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/sidebar";
 import { SubSidebar } from "@/components/sub-sidebar";
+import { Editor } from "@/components/ui/editor";
 
 export default function Home() {
   return (
@@ -10,7 +11,9 @@ export default function Home() {
             <Sidebar className="hidden lg:block" />
             <SubSidebar className="hidden lg:block" />
             <div className="col-span-2 lg:col-span-3 lg:border-l">
-              <div className="h-full px-4 py-6 lg:px-8">Hello World</div>
+              <div className="h-full px-4 py-6 lg:px-8">
+                <Editor />
+              </div>
             </div>
           </div>
         </div>
