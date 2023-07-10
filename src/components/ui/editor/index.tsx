@@ -11,14 +11,16 @@ import { toast } from "sonner";
 import va from "@vercel/analytics";
 import DEFAULT_EDITOR_CONTENT from "./default-content";
 import { EditorBubbleMenu } from "./components";
-import { Input } from "../input";
+import { useStoreNote } from "@/db/hooks/mutation/useStoreNote";
 
 export function Editor() {
   const [content, setContent] = useLocalStorage(
     "content",
     DEFAULT_EDITOR_CONTENT
   );
+  const [title, setTitle] = useState("Untitled");
   const [saveStatus, setSaveStatus] = useState("Saved");
+  const { error, status, storeNote } = useStoreNote();
 
   const [hydrated, setHydrated] = useState(false);
 
@@ -26,10 +28,8 @@ export function Editor() {
     const json = editor.getJSON();
     setSaveStatus("Saving...");
     setContent(json);
-    // Simulate a delay in saving.
-    setTimeout(() => {
-      setSaveStatus("Saved");
-    }, 500);
+    await storeNote({ content: json, title });
+    setSaveStatus("Saved");
   }, 750);
 
   const editor = useEditor({
@@ -138,6 +138,8 @@ export function Editor() {
       <div>
         <input
           type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Untitled"
           className="w-full text-2xl font-bold text-stone-500 bg-transparent border-none outline-none"
         />

@@ -1,40 +1,92 @@
-"@radix-ui/react-popover": "^1.0.6",
-"@tiptap/core": "^2.0.3",
-"@tiptap/extension-color": "^2.0.3",
-"@tiptap/extension-highlight": "^2.0.3",
-"@tiptap/extension-horizontal-rule": "^2.0.3",
-"@tiptap/extension-image": "^2.0.3",
-"@tiptap/extension-link": "^2.0.0-beta.220",
-"@tiptap/extension-placeholder": "2.0.3",
-"@tiptap/extension-task-item": "^2.0.3",
-"@tiptap/extension-task-list": "^2.0.3",
-"@tiptap/extension-text-style": "^2.0.3",
-"@tiptap/extension-underline": "^2.0.3",
-"@tiptap/pm": "^2.0.0-beta.220",
-"@tiptap/react": "^2.0.3",
-"@tiptap/starter-kit": "^2.0.0-beta.220",
-"@tiptap/suggestion": "^2.0.3",
-"@types/node": "18.15.3",
-"@types/react": "18.0.28",
-"@types/react-dom": "18.0.11",
-"@upstash/ratelimit": "^0.4.3",
-"@vercel/analytics": "^1.0.1",
-"@vercel/blob": "^0.9.2",
-"@vercel/kv": "^0.2.1",
-"ai": "^2.1.3",
-"clsx": "^1.2.1",
-"eslint": "8.36.0",
-"eslint-config-next": "13.2.4",
-"eventsource-parser": "^0.1.0",
-"framer-motion": "^10.12.18",
-"lucide-react": "^0.244.0",
-"next": "13.4.8-canary.14",
-"openai-edge": "^1.0.0",
-"react": "18.2.0",
-"react-dom": "18.2.0",
-"react-markdown": "^8.0.5",
-"sonner": "^0.5.0",
-"tippy.js": "^6.3.7",
-"tiptap-markdown": "^0.8.1",
-"typescript": "4.9.5",
-"use-debounce": "^9.0.3"
+# Lets talk requirements
+
+## Notebook
+
+Can contain multiple notes,
+Each notebook will just have a unique id, and a name, and a list of notes
+Single note book can have multiple notes
+
+Users can create, edit, delete notebook
+
+## Note
+
+Each note will have a unique id, a title, a content, a notebook id and a list of tag ids
+Single note can only belong to one notebook
+Single note can have multiple tags
+
+Users can create, edit, delete note
+
+## Tag
+
+Each tag will have a unique id, a name, and a list of note ids
+
+Single tag can have multiple notes
+Single note can have multiple tags
+
+Users can create, edit, delete tag
+
+## Let's make relationship between them
+
+This is the format to use to form relation
+
+```js
+db.setSchema([
+  {
+    singular: "post",
+    plural: "posts",
+    relations: {
+      author: { belongsTo: "author" },
+      comments: { hasMany: "comment" },
+    },
+  },
+  {
+    singular: "author",
+    plural: "authors",
+    relations: {
+      posts: { hasMany: "post" },
+    },
+  },
+  {
+    singular: "comment",
+    plural: "comments",
+    relations: {
+      post: { belongsTo: "post" },
+    },
+  },
+]);
+```
+
+Now give me the relation between notebook, note and tag
+
+## Let's make the schema
+
+```js
+db.setSchema([
+  {
+    singular: "notebook",
+    plural: "notebooks",
+    relations: {
+      notes: { hasMany: "note" },
+    },
+  },
+  {
+    singular: "note",
+    plural: "notes",
+    relations: {
+      notebook: { belongsTo: "notebook" },
+      tags: { hasMany: "tag" },
+    },
+  },
+  {
+    singular: "tag",
+    plural: "tags",
+    relations: {
+      notes: { hasMany: "note" },
+    },
+  },
+]);
+```
+
+## Tasks to do
+
+- [ ] Create a hook for storing notes to pouchdb
