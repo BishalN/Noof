@@ -4,31 +4,33 @@ import { useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { TiptapEditorProps } from "./props";
 import { TiptapExtensions } from "./extensions";
-import useLocalStorage from "@/lib/hooks/use-local-storage";
 import { useDebouncedCallback } from "use-debounce";
 import { useCompletion } from "ai/react";
 import { toast } from "sonner";
 import va from "@vercel/analytics";
 import DEFAULT_EDITOR_CONTENT from "./default-content";
 import { EditorBubbleMenu } from "./components";
-import { useStoreNote } from "@/db/hooks/mutation/useStoreNote";
+import { useSelectedNoteStore } from "@/store/note-editor-selection-store";
+
+// Whenever users selects on a note from sidebar or create a new note,
+// the editor will be hydrated with the content of the note.
+// also we need to add the note id to the url
+// also we need to have the editor focused
+
+// If there is no selection then just show a welcome message and a button to create a new note
 
 export function Editor() {
-  const [content, setContent] = useLocalStorage(
-    "content",
-    DEFAULT_EDITOR_CONTENT
-  );
+  const { selectedNote } = useSelectedNoteStore();
+
   const [title, setTitle] = useState("Untitled");
   const [saveStatus, setSaveStatus] = useState("Saved");
-  // const { error, status, storeNote } = useStoreNote();
 
   const [hydrated, setHydrated] = useState(false);
 
   const debouncedUpdates = useDebouncedCallback(async ({ editor }) => {
     const json = editor.getJSON();
     setSaveStatus("Saving...");
-    setContent(json);
-    // await storeNote({ content: json, title });
+    // setContent(json);
     setSaveStatus("Saved");
   }, 750);
 
@@ -127,11 +129,15 @@ export function Editor() {
 
   // Hydrate the editor with the content from localStorage.
   useEffect(() => {
-    if (editor && content && !hydrated) {
-      editor.commands.setContent(content);
+    if (editor && selectedNote.content && !hydrated) {
+      editor.commands.setContent(selectedNote.content);
       setHydrated(true);
     }
-  }, [editor, content, hydrated]);
+  }, [editor, selectedNote.content, hydrated]);
+
+  if (!selectedNote.id || selectedNote.id.length === 0) {
+    return <div>Show the empty state here</div>;
+  }
 
   return (
     <div>

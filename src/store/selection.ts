@@ -7,6 +7,7 @@ export type SelectionStore = {
     name: string;
     notes: string[];
     type: "notebook" | "tag";
+    rev?: string;
   };
   setSelection: (data: SelectionStore["selection"]) => void;
 };

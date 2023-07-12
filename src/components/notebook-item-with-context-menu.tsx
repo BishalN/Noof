@@ -42,10 +42,8 @@ export function NotebookItemWithContextMenu({
             key={notebook.id}
             onClick={() =>
               setSelection({
+                ...notebook,
                 id: notebook.id as string,
-                type: "notebook",
-                name: notebook.name,
-                notes: notebook.notes,
               })
             }
             className={cn(

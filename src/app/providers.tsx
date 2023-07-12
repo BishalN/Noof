@@ -9,7 +9,6 @@ import clsx from "clsx";
 
 import { displayFontMapper, defaultFontMapper } from "@/styles/fonts";
 import useLocalStorage from "@/lib/hooks/use-local-storage";
-import { PouchDBProvider } from "@/db/pouch-db";
 
 export const AppContext = createContext<{
   font: string;

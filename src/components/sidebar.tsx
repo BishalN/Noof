@@ -76,10 +76,8 @@ export function Sidebar({ className }: SidebarProps) {
                   key={tag.id}
                   onClick={() =>
                     setSelection({
+                      ...tag,
                       id: tag.id as string,
-                      type: "tag",
-                      name: tag.name,
-                      notes: tag.notes,
                     })
                   }
                   className={cn(

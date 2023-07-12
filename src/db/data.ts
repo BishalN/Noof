@@ -1,5 +1,5 @@
 import { queryClient } from "@/app/providers";
-import { SelectionStore } from "@/store/selection";
+import { SelectionStore, useSelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import PouchDB from "pouchdb-browser";
 
@@ -36,6 +36,7 @@ export const reldb = db.setSchema([
 
 export type Note = {
   id?: string;
+  rev?: string;
   name: string;
   content: any;
   type: "note";
@@ -45,6 +46,7 @@ export type Note = {
 
 export type Notebook = {
   id?: string;
+  rev?: string;
   name: string;
   type: "notebook";
   notes: string[];
@@ -52,6 +54,7 @@ export type Notebook = {
 
 export type Tag = {
   id?: string;
+  rev?: string;
   name: string;
   type: "tag";
   notes: string[];
@@ -125,12 +128,23 @@ export const useDeleteNotebook = () => {
 };
 
 export const useCreateNote = () => {
+  const { selection } = useSelectionStore();
   return useMutation({
     mutationFn: async (note: Note) => {
       const res = await reldb.rel.save("note", note);
+      // Associate it with the notebook of current selection
+      // console.log("selection", JSON.stringify(selection, null, 2));
+      // await reldb.rel.save(selection.type, {
+      //   ...selection,
+      //   notes: [...selection.notes, res.id],
+      // });
       return res;
     },
-    onSuccess: () => {
+    onSuccess: ({ id }) => {
+      // TODO: invalidate only one notebook
+      queryClient.invalidateQueries({
+        queryKey: [selection.type, id],
+      });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notebooks"] });
     },
@@ -171,6 +185,8 @@ export const useUpdateNote = () => {
       return res;
     },
     onSuccess: () => {
+      // ["notebook","noteid"]
+      // ["tags","tagid"]
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notebooks"] });
     },
@@ -252,14 +268,32 @@ export const useDeleteTag = () => {
   });
 };
 
-export const useGetNotesBySelection = (
-  selection: SelectionStore["selection"]
-) => {
+export const useGetNotesBySelection = () => {
+  const { selection } = useSelectionStore();
   return useQuery<null, Error, GetNotesResponse>({
     queryKey: [selection.type, selection.id],
     queryFn: async () => {
       const res = await reldb.rel.find("note", selection.notes);
+      console.log(
+        "useGetNotesBySelection-Input",
+        JSON.stringify(selection, null, 2)
+      );
+      console.log(
+        "useGetNotesBySelection-Output",
+        JSON.stringify(res, null, 2)
+      );
       return res;
     },
+    cacheTime: 0,
   });
 };
+
+// I don't see data immediately after creating a note
+// I see it after window refocus / reload
+// I don't see notes when I change the notebook
+
+// Since the selection is stored in a local storage
+// Whenever selection changes the notes array is also gone has to start from scratch
+// For that reason the indexdb's notebooks should also have the ids of the notes
+
+// react query possible issues
