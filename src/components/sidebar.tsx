@@ -3,21 +3,18 @@
 import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useGetNoteBooks } from "@/db/hooks/queries/useGetNoteBooks";
 import { reldb } from "@/db/pouch-db";
 import { useState } from "react";
-import { useGetTags } from "@/db/hooks/queries/useGetTags";
 import { useSelectionStore } from "@/store/selection";
+import { useGetNotebooks, useGetTags } from "@/db/data";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
-  const { data, isLoading } = useGetNoteBooks({ variables: null });
-  const { data: tagsData, isLoading: tagsLoading } = useGetTags({
-    variables: null,
-  });
+  const { data: notebooksData, isLoading: isNotebooksDataLoading } =
+    useGetNotebooks();
+  const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();
   const { selection, setSelection } = useSelectionStore();
-  if (isLoading || tagsLoading) return <div>Loading...</div>;
   return (
     <div
       className={cn(
@@ -32,7 +29,7 @@ export function Sidebar({ className }: SidebarProps) {
               <ScrollTextIcon className="mr-2 h-4 w-4" />
               <span>All Notes</span>
             </div>
-            <span>{data?.notebooks.length || "0"}</span>
+            <span>{notebooksData?.notebooks.length || "0"}</span>
           </h2>
         </div>
 
@@ -45,10 +42,17 @@ export function Sidebar({ className }: SidebarProps) {
           </h2>
 
           <div className="space-y-1 pl-12 pr-4">
-            {data?.notebooks.map((notebook) => (
+            {notebooksData?.notebooks.map((notebook) => (
               <p
                 key={notebook.id}
-                onClick={() => setSelection(notebook)}
+                onClick={() =>
+                  setSelection({
+                    id: notebook.id as string,
+                    type: "notebook",
+                    name: notebook.name,
+                    notes: notebook.notes,
+                  })
+                }
                 className={cn(
                   "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
                   selection?.id === notebook.id && "bg-slate-300"
@@ -74,7 +78,14 @@ export function Sidebar({ className }: SidebarProps) {
               {tagsData?.tags.map((tag) => (
                 <li
                   key={tag.id}
-                  onClick={() => setSelection(tag)}
+                  onClick={() =>
+                    setSelection({
+                      id: tag.id as string,
+                      type: "tag",
+                      name: tag.name,
+                      notes: tag.notes,
+                    })
+                  }
                   className={cn(
                     "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
                     selection?.id === tag.id && "bg-slate-300"
@@ -104,47 +115,6 @@ export const SeedPouchDB = () => {
       setLoading(false);
     });
   };
-
-  // This seeding is not properly working so lets the examples from readme
-  // db.rel
-  //   .save("author", {
-  //     name: "Stephen King",
-  //     id: 19,
-  //     books: [1, 2],
-  //   })
-  //   .then(function () {
-  //     return db.rel.save("author", {
-  //       name: "Peter Straub",
-  //       id: 2,
-  //       books: [2, 3],
-  //     });
-  //   })
-  //   .then(function () {
-  //     return db.rel.save("book", {
-  //       title: "It",
-  //       id: 1,
-  //       authors: [19],
-  //     });
-  //   })
-  //   .then(function () {
-  //     return db.rel.save("book", {
-  //       title: "The Talisman",
-  //       id: 2,
-  //       authors: [19, 2],
-  //     });
-  //   })
-  //   .then(function () {
-  //     return db.rel.save("book", {
-  //       title: "Ghost Story",
-  //       id: 3,
-  //       authors: [2],
-  //     });
-  //   })
-  //   .then(function () {
-  //     return db.rel.find("author");
-  //   });
-
-  // use the similar style as above to seed the different data types and relations as below
 
   const handleNewSeed = () => {
     reldb.rel

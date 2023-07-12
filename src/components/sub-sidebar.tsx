@@ -1,17 +1,18 @@
 "use client";
 
-import { useGetNotesFromNotebookOrTag } from "@/db/hooks/queries/useGetNotesFromNotebookOrTag";
+import { useGetNotesBySelection } from "@/db/data";
 import { cn } from "@/lib/utils";
 import { useSelectionStore } from "@/store/selection";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
-  const { selection, setSelection } = useSelectionStore();
-  const { data, isLoading } = useGetNotesFromNotebookOrTag({
-    variables: { id: selection?.id, type: selection?.type },
-    enabled: !!selection,
-  });
+  const { selection } = useSelectionStore();
+
+  const { data: notesData, isLoading: isNotesDataLoading } =
+    useGetNotesBySelection(selection);
+
+  if (isNotesDataLoading) return <div>Loading...</div>;
 
   return (
     <div
@@ -28,24 +29,17 @@ export function SubSidebar({ className }: SubSidebarProps) {
         </div>
 
         <div className="space-y-1">
-          <NoteCard
-            description="This is a description, long enough to be a description"
-            tags={["tag1", "tag2"]}
-            time="2 hours ago"
-            title="This is a title"
-          />
-          <NoteCard
-            description="This is a description, long enough to be a description"
-            tags={["tag1", "tag2"]}
-            time="2 hours ago"
-            title="This is a title"
-          />
-          <NoteCard
-            description="This is a description, long enough to be a description"
-            tags={["tag1", "tag2"]}
-            time="2 hours ago"
-            title="This is a title"
-          />
+          {notesData?.notes.map((note) => {
+            return (
+              <NoteCard
+                key={note.id}
+                content={note.content}
+                tags={note.tags}
+                time="2 hours ago"
+                title={note.name}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
@@ -54,12 +48,12 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
 interface NoteCardProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
-  description: string;
+  content: string;
   tags: string[];
   time: string;
 }
 
-export function NoteCard({ description, tags, time, title }: NoteCardProps) {
+export function NoteCard({ content, tags, time, title }: NoteCardProps) {
   return (
     <div className="px-3 py-2 cursor-pointer hover:bg-gray-200">
       <p className=" font-semibold">{title}</p>
@@ -76,7 +70,7 @@ export function NoteCard({ description, tags, time, title }: NoteCardProps) {
           ))}
         </p>
       </div>
-      <p className="text-muted-foreground">{description}</p>
+      <p className="text-muted-foreground">{content}</p>
     </div>
   );
 }

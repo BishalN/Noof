@@ -1,4 +1,5 @@
 import { queryClient } from "@/app/providers";
+import { SelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import PouchDB from "pouchdb-browser";
 
@@ -91,6 +92,7 @@ export const useGetNotebook = (id: string) => {
       const res = await reldb.rel.find("notebook", id);
       return res;
     },
+    enabled: !!id,
   });
 };
 
@@ -246,6 +248,18 @@ export const useDeleteTag = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+};
+
+export const useGetNotesBySelection = (
+  selection: SelectionStore["selection"]
+) => {
+  return useQuery<null, Error, GetNotesResponse>({
+    queryKey: [selection.type, selection.id],
+    queryFn: async () => {
+      const res = await reldb.rel.find("note", selection.notes);
+      return res;
     },
   });
 };

@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
+// TODO: may be just using query params is good
 export type SelectionStore = {
   selection: {
     id: string;
     name: string;
     notes: string[];
-    rev: string;
     type: "notebook" | "tag";
   };
   setSelection: (data: SelectionStore["selection"]) => void;
