@@ -1,12 +1,21 @@
 "use client";
 
-import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
+import {
+  ScrollTextIcon,
+  BookIcon,
+  TagsIcon,
+  PlusIcon,
+  PlusCircleIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { reldb } from "@/db/pouch-db";
 import { useState } from "react";
 import { useSelectionStore } from "@/store/selection";
 import { useGetNotebooks, useGetTags } from "@/db/data";
+import { Button } from "./ui/button";
+import { CreateNotebookDialog } from "./create-notebook-dialog";
+import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -34,33 +43,20 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
 
         <div className="px-3">
-          <h2 className="mb-2 px-4 font-semibold tracking-tight flex justify-between">
+          <h2 className="mb-2 px-4 font-semibold tracking-tight flex justify-between items-center">
             <div className="flex items-center">
               <BookIcon className="mr-2 h-4 w-4" />
               <span>Notebooks</span>
             </div>
+            <CreateNotebookDialog />
           </h2>
 
           <div className="space-y-1 pl-12 pr-4">
             {notebooksData?.notebooks.map((notebook) => (
-              <p
+              <NotebookItemWithContextMenu
+                notebook={notebook}
                 key={notebook.id}
-                onClick={() =>
-                  setSelection({
-                    id: notebook.id as string,
-                    type: "notebook",
-                    name: notebook.name,
-                    notes: notebook.notes,
-                  })
-                }
-                className={cn(
-                  "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
-                  selection?.id === notebook.id && "bg-slate-300"
-                )}
-              >
-                <span>{notebook.name}</span>
-                <span>{notebook.notes?.length || "0"}</span>
-              </p>
+              />
             ))}
           </div>
         </div>

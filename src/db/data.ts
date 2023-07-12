@@ -59,7 +59,7 @@ export type Tag = {
 
 export const useCreateNotebook = () => {
   return useMutation({
-    mutationFn: async (notebook: Notebook) => {
+    mutationFn: async (notebook: Partial<Notebook>) => {
       const res = await reldb.rel.save("notebook", notebook);
       return res;
     },
