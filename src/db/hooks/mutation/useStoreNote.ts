@@ -1,5 +1,5 @@
 import { Note } from "../../types";
-import { reldb } from "../../PouchDBProvider";
+import { reldb } from "../../pouch-db";
 import { useMutation } from "@tanstack/react-query";
 
 export const useStoreNote = () => {

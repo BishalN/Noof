@@ -137,6 +137,9 @@ dependencies:
   pouchdb:
     specifier: ^8.0.1
     version: 8.0.1
+  pouchdb-browser:
+    specifier: ^8.0.1
+    version: 8.0.1
   pouchdb-find:
     specifier: ^8.0.1
     version: 8.0.1
@@ -182,11 +185,17 @@ dependencies:
   use-pouchdb:
     specifier: ^2.0.2
     version: 2.0.2(react@18.2.0)
+  zustand:
+    specifier: ^4.3.9
+    version: 4.3.9(react@18.2.0)
 
 devDependencies:
   '@tanstack/eslint-plugin-query':
     specifier: ^4.29.9
     version: 4.29.9
+  '@types/pouchdb-browser':
+    specifier: ^6.1.3
+    version: 6.1.3
 
 packages:
 
@@ -1842,7 +1851,6 @@ packages:
     resolution: {integrity: sha512-/vPO1EPOs306Cvhwv7KfVfYvOJqA/S/AXjaHQiJboCZzcNDb+TIJFN9/2C9DZ//ijSKWioNyUxD792QmDJ+HKQ==}
     dependencies:
       '@types/ms': 0.7.31
-    dev: false
 
   /@types/hast@2.3.4:
     resolution: {integrity: sha512-wLEm0QvaoawEDoTRwzTXp4b4jpwiJDvR5KMnFnVodm3scufTlBOWRD6N1OBf9TZMhjlNsSfcO5V+7AF4+Vy+9g==}
@@ -1901,7 +1909,6 @@ packages:
 
   /@types/ms@0.7.31:
     resolution: {integrity: sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==}
-    dev: false
 
   /@types/node@20.3.3:
     resolution: {integrity: sha512-wheIYdr4NYML61AjC8MKj/2jrR/kDQri/CIpVoZwldwhnIrD/j9jIU5bJ8yBKuB2VhpFV7Ab6G2XkBjv9r9Zzw==}
@@ -1931,13 +1938,11 @@ packages:
     resolution: {integrity: sha512-9Z4TLbF/KJWy/D2sWRPBA+RNU0odQimfdvlDX+EY7rGcd3aVoH8qjD/X0Xcd/0dfBH5pKrNIMFFQgW/TylRCmA==}
     dependencies:
       '@types/pouchdb-core': 7.0.11
-    dev: false
 
   /@types/pouchdb-adapter-idb@6.1.4:
     resolution: {integrity: sha512-KIAXbkF4uYUz0ZwfNEFLtEkK44mEWopAsD76UhucH92XnJloBysav+TjI4FFfYQyTjoW3S1s6V+Z14CUJZ0F6w==}
     dependencies:
       '@types/pouchdb-core': 7.0.11
-    dev: false
 
   /@types/pouchdb-adapter-leveldb@6.1.3:
     resolution: {integrity: sha512-ex8NFqQGFwEpFi7AaZ5YofmuemfZNsL3nTFZBUCAKYMBkazQij1pe2ILLStSvJr0XS0qxgXjCEW19T5Wqiiskg==}
@@ -1968,7 +1973,6 @@ packages:
     resolution: {integrity: sha512-zMJQCtXC40hBsIDRn0GhmpeGMK0f9l/OGWfLguvczROzxxcOD7REI+e6SEmX7gJKw5JuMvlfuHzkQwjmvSJbtg==}
     dependencies:
       '@types/pouchdb-core': 7.0.11
-    dev: false
 
   /@types/pouchdb-browser@6.1.3:
     resolution: {integrity: sha512-EdYowrWxW9SWBMX/rux2eq7dbHi5Zeyzz+FF/IAsgQKnUxgeCO5VO2j4zTzos0SDyJvAQU+EYRc11r7xGn5tvA==}
@@ -1979,20 +1983,17 @@ packages:
       '@types/pouchdb-core': 7.0.11
       '@types/pouchdb-mapreduce': 6.1.7
       '@types/pouchdb-replication': 6.4.4
-    dev: false
 
   /@types/pouchdb-core@7.0.11:
     resolution: {integrity: sha512-KTKj0Taf8pLTj8eW3qBtCd1Fh+/yhEyVo6/1czTN46MnseobdmnqgXtzaKgHMbuLouh+SHK1vM++aMPaG1qTTA==}
     dependencies:
       '@types/debug': 4.1.8
       '@types/pouchdb-find': 7.3.0
-    dev: false
 
   /@types/pouchdb-find@7.3.0:
     resolution: {integrity: sha512-sFPli5tBjGX9UfXioik1jUzPdcN84eV82n0lmEFuoPepWqkLjQcyri0eOa++HYOaNPyMDhKFBqEALEZivK2dRg==}
     dependencies:
       '@types/pouchdb-core': 7.0.11
-    dev: false
 
   /@types/pouchdb-http@6.1.3:
     resolution: {integrity: sha512-0e9E5SqNOyPl/3FnEIbENssB4FlJsNYuOy131nxrZk36S+y1R/6qO7ZVRypWpGTqBWSuVd7gCsq2UDwO/285+w==}
@@ -2005,7 +2006,6 @@ packages:
     resolution: {integrity: sha512-WzBwm7tmO9QhfRzVaWT4v6JQSS/fG2OoUDrWrhX87rPe2Pn6laPvdK5li6myNRxCoI/l5e8Jd+oYBAFnaiFucA==}
     dependencies:
       '@types/pouchdb-core': 7.0.11
-    dev: false
 
   /@types/pouchdb-node@6.1.4:
     resolution: {integrity: sha512-wnTCH8X1JOPpNOfVhz8HW0AvmdHh6pt40MuRj0jQnK7QEHsHS79WujsKTKSOF8QXtPwpvCNSsI7ut7H7tfxxJQ==}
@@ -2022,7 +2022,6 @@ packages:
     dependencies:
       '@types/pouchdb-core': 7.0.11
       '@types/pouchdb-find': 7.3.0
-    dev: false
 
   /@types/pouchdb@6.4.0:
     resolution: {integrity: sha512-eGCpX+NXhd5VLJuJMzwe3L79fa9+IDTrAG3CPaf4s/31PD56hOrhDJTSmRELSXuiqXr6+OHzzP0PldSaWsFt7w==}
@@ -5186,6 +5185,15 @@ packages:
       buffer-from: 1.1.2
     dev: false
 
+  /pouchdb-browser@8.0.1:
+    resolution: {integrity: sha512-wXObS1Layd/gBRKwa6EBS99tFY9G3VPaMRu8ffWCohkpi9PZCm3z1xeB4P4S9Qecf0u5so+rxvbVVyTtgdhvaQ==}
+    dependencies:
+      immediate: 3.3.0
+      spark-md5: 3.0.2
+      uuid: 8.3.2
+      vuvuzela: 1.0.3
+    dev: false
+
   /pouchdb-changes-filter@8.0.1:
     resolution: {integrity: sha512-UKgH6YRA9PnvIGHb0FuDEEqeTewgHugbbBt5vpVo0QmbWKxNiau/JiTC9mY5Hj9l7ghaIUpO0TFG95a6RXWsQA==}
     dependencies:
@@ -6644,4 +6652,20 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
+
+  /zustand@4.3.9(react@18.2.0):
+    resolution: {integrity: sha512-Tat5r8jOMG1Vcsj8uldMyqYKC5IZvQif8zetmLHs9WoZlntTHmIoNM8TpLRY31ExncuUvUOXehd0kvahkuHjDw==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false

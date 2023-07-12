@@ -20,7 +20,7 @@ export function Editor() {
   );
   const [title, setTitle] = useState("Untitled");
   const [saveStatus, setSaveStatus] = useState("Saved");
-  const { error, status, storeNote } = useStoreNote();
+  // const { error, status, storeNote } = useStoreNote();
 
   const [hydrated, setHydrated] = useState(false);
 
@@ -28,7 +28,7 @@ export function Editor() {
     const json = editor.getJSON();
     setSaveStatus("Saving...");
     setContent(json);
-    await storeNote({ content: json, title });
+    // await storeNote({ content: json, title });
     setSaveStatus("Saved");
   }, 750);
 

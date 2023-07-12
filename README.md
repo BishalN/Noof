@@ -90,3 +90,8 @@ db.setSchema([
 ## Tasks to do
 
 - [ ] Create a hook for storing notes to pouchdb
+
+- allow users to select either the notebook or tag and let that affect the subsidebar
+- for that we'll need to have state manager or local storage
+
+- We have to fetch all notes belonging either to a notebook or a tag

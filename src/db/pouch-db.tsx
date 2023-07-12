@@ -1,14 +1,11 @@
 "use client";
 
-import React from "react";
-import PouchDB from "pouchdb";
+import PouchDB from "pouchdb-browser";
 
 import find from "pouchdb-find";
 import rel from "relational-pouch";
 
 PouchDB.plugin(find).plugin(rel);
-
-import { Provider } from "use-pouchdb";
 
 const db = new PouchDB("noof");
 export const reldb = db.setSchema([
@@ -35,11 +32,3 @@ export const reldb = db.setSchema([
     },
   },
 ]);
-
-export const PouchDBProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  return <Provider pouchdb={reldb}>{children}</Provider>;
-};

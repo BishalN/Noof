@@ -1,8 +1,18 @@
+"use client";
+
+import { useGetNotesFromNotebookOrTag } from "@/db/hooks/queries/useGetNotesFromNotebookOrTag";
 import { cn } from "@/lib/utils";
+import { useSelectionStore } from "@/store/selection";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
+  const { selection, setSelection } = useSelectionStore();
+  const { data, isLoading } = useGetNotesFromNotebookOrTag({
+    variables: { id: selection?.id, type: selection?.type },
+    enabled: !!selection,
+  });
+
   return (
     <div
       className={cn(
@@ -13,7 +23,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
       <div className="h-full w-full space-y-3 py-4">
         <div className="px-3">
           <h2 className="mb-2 px-4 text-center font-semibold tracking-tight">
-            First Notebook
+            {selection?.name}
           </h2>
         </div>
 
@@ -38,9 +48,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
           />
         </div>
       </div>
-      {/* <div className="px-7">
-        <h1>Bishal Neupane</h1>
-      </div> */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { reldb } from "@/db/PouchDBProvider";
+import { reldb } from "@/db/pouch-db";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetNote = () => {

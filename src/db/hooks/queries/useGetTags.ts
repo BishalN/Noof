@@ -1,4 +1,4 @@
-import { reldb } from "@/db/PouchDBProvider";
+import { reldb } from "@/db/pouch-db";
 import { Tag } from "@/db/types";
 import { createQuery } from "react-query-kit";
 

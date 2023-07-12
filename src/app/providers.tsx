@@ -9,7 +9,7 @@ import clsx from "clsx";
 
 import { displayFontMapper, defaultFontMapper } from "@/styles/fonts";
 import useLocalStorage from "@/lib/hooks/use-local-storage";
-import { PouchDBProvider } from "@/db/PouchDBProvider";
+import { PouchDBProvider } from "@/db/pouch-db";
 
 export const AppContext = createContext<{
   font: string;
@@ -19,7 +19,7 @@ export const AppContext = createContext<{
   setFont: () => {},
 });
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [font, setFont] = useLocalStorage<string>("novel__font", "Sans Serif");
