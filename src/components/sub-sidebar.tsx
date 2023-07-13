@@ -1,16 +1,23 @@
 "use client";
 import { useParams, useRouter } from "next/navigation";
 
-import { Note, reldb, useCreateNote, useGetNotes } from "@/db/data";
+import {
+  Note,
+  RelationalIndexDBContext,
+  useCreateNote,
+  useGetNotes,
+} from "@/db/data";
 import { cn } from "@/lib/utils";
 import { useSelectionStore } from "@/store/selection";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   const { selection, setSelection } = useSelectionStore();
 
   const { data: notesData, isLoading: isNotesDataLoading } = useGetNotes();

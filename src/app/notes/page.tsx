@@ -3,8 +3,8 @@
 import {
   Note,
   Notebook,
+  RelationalIndexDBContext,
   Tag,
-  reldb,
   useCreateNote,
   useCreateNotebook,
   useCreateTag,
@@ -14,9 +14,10 @@ import {
   useGetTags,
   useUpdateNotebook,
 } from "@/db/data";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 export default function NotesPage() {
+  const { reldb } = useContext(RelationalIndexDBContext);
   const [clearLoading, setClearLoading] = useState(false);
   const handleClearDatabase = async () => {
     setClearLoading(true);

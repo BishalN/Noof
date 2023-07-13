@@ -9,10 +9,12 @@ import clsx from "clsx";
 
 import { displayFontMapper, defaultFontMapper } from "@/styles/fonts";
 import useLocalStorage from "@/lib/hooks/use-local-storage";
+import { RelationalIndexDBContext, reldb } from "@/db/data";
 
 export const AppContext = createContext<{
   font: string;
-  setFont: Dispatch<SetStateAction<string>>;
+  // TODO: fix this type
+  setFont: (value: string) => void;
 }>({
   font: "Sans Serif",
   setFont: () => {},
@@ -31,14 +33,21 @@ export default function Providers({ children }: { children: ReactNode }) {
       }}
     >
       <Toaster />
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <body
-          className={clsx(displayFontMapper[font], defaultFontMapper[font])}
-        >
-          {children}
-        </body>
-      </QueryClientProvider>
+      <RelationalIndexDBContext.Provider
+        value={{
+          reldb: reldb,
+        }}
+      >
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <body
+          // TODO: fix this typescript issue here
+          // className={clsx(displayFontMapper[font], defaultFontMapper[font])}
+          >
+            {children}
+          </body>
+        </QueryClientProvider>
+      </RelationalIndexDBContext.Provider>
       <Analytics />
     </AppContext.Provider>
   );

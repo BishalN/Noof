@@ -1,19 +1,17 @@
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { queryClient } from "@/app/providers";
-import { SelectionStore, useSelectionStore } from "@/store/selection";
+import { useSelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import PouchDB from "pouchdb-browser";
+import PouchDB from "pouchdb";
 
 import find from "pouchdb-find";
 import rel from "relational-pouch";
+import React from "react";
 
 PouchDB.plugin(find).plugin(rel);
 
+// TODO: I need to dynamically import this to context
+// so that it only gets created on frontend
 const db = new PouchDB("noof-dev");
 export const reldb = db.setSchema([
   {
@@ -39,6 +37,11 @@ export const reldb = db.setSchema([
     },
   },
 ]);
+
+// create a context for reldb and wrap your app in it
+export const RelationalIndexDBContext = React.createContext({
+  reldb,
+});
 
 export type Note = {
   id?: string;

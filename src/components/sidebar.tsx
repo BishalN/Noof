@@ -9,10 +9,13 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { reldb } from "@/db/pouch-db";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelectionStore } from "@/store/selection";
-import { useGetNotebooks, useGetTags } from "@/db/data";
+import {
+  RelationalIndexDBContext,
+  useGetNotebooks,
+  useGetTags,
+} from "@/db/data";
 import { Button } from "./ui/button";
 import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
@@ -20,6 +23,8 @@ import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   const { data: notebooksData, isLoading: isNotebooksDataLoading } =
     useGetNotebooks();
   const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();
@@ -94,82 +99,8 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
       <div className="px-7">
-        <SeedPouchDB />
         <h1>Bishal Neupane</h1>
       </div>
     </div>
   );
 }
-
-export const SeedPouchDB = () => {
-  const [loading, setLoading] = useState(false);
-  const handleClear = () => {
-    setLoading(true);
-    reldb.destroy().then(() => {
-      setLoading(false);
-    });
-  };
-
-  const handleNewSeed = () => {
-    reldb.rel
-      .save("notebook", {
-        name: `Notebook ${1}`,
-        id: 1,
-        notes: [1],
-        type: "notebook",
-      })
-      .then(() => {
-        return reldb.rel.save("note", {
-          title: `Note ${1}`,
-          content: "We are going to have markdown here <h1>hello</h1>",
-          notebook: 1,
-          tags: [12],
-          type: "note",
-        });
-      })
-      .then(() => {
-        return reldb.rel.save("tag", {
-          name: `Tag ${12}`,
-          id: 12,
-          notes: [1],
-          type: "tag",
-        });
-      });
-  };
-
-  const handleSeed = () => {
-    for (let i = 0; i < 5; i++) {
-      reldb.rel.save("notebook", {
-        name: `Notebook ${i}`,
-        id: i,
-        notes: [i, i + 1, i + 2],
-        type: "notebook",
-      });
-    }
-
-    for (let i = 0; i < 15; i++) {
-      reldb.rel.save("note", {
-        title: `Note ${i}`,
-        content: "We are going to have markdown here <h1>hello</h1>",
-        notebook: i % 5,
-        tags: [i % 5, (i + 5) % 5, (i + 10) % 5],
-        type: "note",
-      });
-    }
-
-    for (let i = 0; i < 5; i++) {
-      reldb.rel.save("tag", {
-        name: `Tag ${i}`,
-        notes: [i, i + 1, i + 2],
-        id: i,
-        type: "tag",
-      });
-    }
-  };
-  return (
-    <div className="space-x-3 text-lg mb-10">
-      <button onClick={handleClear}>Clear</button>
-      <button onClick={handleNewSeed}>Seed</button>
-    </div>
-  );
-};
