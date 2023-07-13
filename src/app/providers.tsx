@@ -9,7 +9,9 @@ import clsx from "clsx";
 
 import { displayFontMapper, defaultFontMapper } from "@/styles/fonts";
 import useLocalStorage from "@/lib/hooks/use-local-storage";
-import { RelationalIndexDBContext, reldb } from "@/db/data";
+import dynamic from "next/dynamic";
+
+const DBProvider = dynamic(() => import("@/db/data"), { ssr: false });
 
 export const AppContext = createContext<{
   font: string;
@@ -33,11 +35,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       }}
     >
       <Toaster />
-      <RelationalIndexDBContext.Provider
-        value={{
-          reldb: reldb,
-        }}
-      >
+      <DBProvider>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <body
@@ -47,7 +45,7 @@ export default function Providers({ children }: { children: ReactNode }) {
             {children}
           </body>
         </QueryClientProvider>
-      </RelationalIndexDBContext.Provider>
+      </DBProvider>
       <Analytics />
     </AppContext.Provider>
   );

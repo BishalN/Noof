@@ -2,18 +2,19 @@ import { useParams, useSearchParams } from "next/navigation";
 import { queryClient } from "@/app/providers";
 import { useSelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import PouchDB from "pouchdb";
+import PouchDB from "pouchdb-browser";
 
 import find from "pouchdb-find";
 import rel from "relational-pouch";
-import React from "react";
+// @ts-ignore
+import indexDBAdapter from "pouchdb-adapter-indexeddb";
 
-PouchDB.plugin(find).plugin(rel);
+import React, { ReactNode, useContext } from "react";
 
-// TODO: I need to dynamically import this to context
-// so that it only gets created on frontend
-const db = new PouchDB("noof-dev");
-export const reldb = db.setSchema([
+PouchDB.plugin(indexDBAdapter).plugin(find).plugin(rel);
+
+const db = new PouchDB("noof-dev", { adapter: "indexeddb" });
+const reldb = db.setSchema([
   {
     singular: "notebook",
     plural: "notebooks",
@@ -38,10 +39,21 @@ export const reldb = db.setSchema([
   },
 ]);
 
-// create a context for reldb and wrap your app in it
 export const RelationalIndexDBContext = React.createContext({
   reldb,
 });
+
+export default function DBProvider({ children }: { children: ReactNode }) {
+  return (
+    <RelationalIndexDBContext.Provider
+      value={{
+        reldb,
+      }}
+    >
+      {children}
+    </RelationalIndexDBContext.Provider>
+  );
+}
 
 export type Note = {
   id?: string;
@@ -71,6 +83,7 @@ export type Tag = {
 };
 
 export const useCreateNotebook = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
   return useMutation({
     mutationFn: async (notebook: Partial<Notebook>) => {
       const res = await reldb.rel.save("notebook", notebook);
@@ -86,6 +99,8 @@ type GetNoteBooksResponse = {
   notebooks: Notebook[];
 };
 export const useGetNotebooks = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetNoteBooksResponse>({
     queryKey: ["notebooks"],
     queryFn: async () => {
@@ -99,6 +114,8 @@ type GetNoteBookResponse = {
   notebook: Notebook;
 };
 export const useGetNotebook = (id: string) => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetNoteBookResponse>({
     queryKey: ["notebook", id],
     queryFn: async () => {
@@ -110,6 +127,8 @@ export const useGetNotebook = (id: string) => {
 };
 
 export const useUpdateNotebook = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (notebook: Notebook) => {
       const res = await reldb.rel.save("notebook", notebook);
@@ -124,6 +143,8 @@ export const useUpdateNotebook = () => {
 };
 
 export const useDeleteNotebook = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (notebook: Notebook) => {
       // TODO: what happens to the notes in the notebook?
@@ -138,6 +159,8 @@ export const useDeleteNotebook = () => {
 };
 
 export const useCreateNote = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   const { selection } = useSelectionStore();
   return useMutation({
     mutationFn: async (note: Note) => {
@@ -165,6 +188,8 @@ type GetNotesResponse = {
   notes: Note[];
 };
 export const useGetNotes = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetNotesResponse>({
     queryKey: ["notes"],
     queryFn: async () => {
@@ -180,6 +205,8 @@ type GetNoteResponse = {
 };
 
 export const useGetNote = (id: string) => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetNoteResponse>({
     queryKey: ["note", id],
     queryFn: async () => {
@@ -190,6 +217,8 @@ export const useGetNote = (id: string) => {
 };
 
 export const useUpdateNote = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (note: Note) => {
       const res = await reldb.rel.save("note", note);
@@ -205,6 +234,8 @@ export const useUpdateNote = () => {
 };
 
 export const useDeleteNote = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (note: Note) => {
       const res = await reldb.rel.del("note", note);
@@ -218,6 +249,8 @@ export const useDeleteNote = () => {
 };
 
 export const useCreateTag = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (tag: Tag) => {
       const res = await reldb.rel.save("tag", tag);
@@ -233,6 +266,8 @@ type GetTagsResponse = {
   tags: Tag[];
 };
 export const useGetTags = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetTagsResponse>({
     queryKey: ["tags"],
     queryFn: async () => {
@@ -246,6 +281,8 @@ type GetTagResponse = {
   tag: Tag;
 };
 export const useGetTag = (id: string) => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useQuery<null, Error, GetTagResponse>({
     queryKey: ["tag", id],
     queryFn: async () => {
@@ -256,6 +293,8 @@ export const useGetTag = (id: string) => {
 };
 
 export const useUpdateTag = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (tag: Tag) => {
       const res = await reldb.rel.save("tag", tag);
@@ -268,6 +307,8 @@ export const useUpdateTag = () => {
 };
 
 export const useDeleteTag = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   return useMutation({
     mutationFn: async (tag: Tag) => {
       const res = await reldb.rel.del("tag", tag);
@@ -280,6 +321,8 @@ export const useDeleteTag = () => {
 };
 
 export const useGetNotesBySelection = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   const { selection } = useSelectionStore();
   return useQuery<null, Error, GetNotesResponse>({
     queryKey: [selection.type, selection.id],
@@ -310,6 +353,8 @@ export const useGetNotesBySelection = () => {
 // react query possible issues
 
 export const useGetNoteByQueryParam = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   // We're not getting noteId or something
   const searchParams = useSearchParams();
   const noteId = searchParams.get("noteId");
@@ -340,6 +385,8 @@ export const useGetNoteByQueryParam = () => {
 };
 
 export const useGetNoteByParams = () => {
+  const { reldb } = useContext(RelationalIndexDBContext);
+
   // We're not getting noteId or something
   const { noteId } = useParams();
 
