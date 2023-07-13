@@ -326,7 +326,20 @@ const CreateNotesForm = () => {
     await createNote(note);
     setNote({
       name: "",
-      content: "",
+      content: `{
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Just type"
+                }
+              ]
+            }
+          ]
+        }`,
       type: "note",
       notebook: "",
       tags: [],

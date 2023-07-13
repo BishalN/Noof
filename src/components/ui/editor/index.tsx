@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { TiptapEditorProps } from "./props";
 import { TiptapExtensions } from "./extensions";
@@ -8,21 +8,27 @@ import { useDebouncedCallback } from "use-debounce";
 import { useCompletion } from "ai/react";
 import { toast } from "sonner";
 import va from "@vercel/analytics";
-import DEFAULT_EDITOR_CONTENT from "./default-content";
 import { EditorBubbleMenu } from "./components";
-import { useSelectedNoteStore } from "@/store/note-editor-selection-store";
+import { useGetNoteByParams, useUpdateNote } from "@/db/data";
 
-// Whenever users selects on a note from sidebar or create a new note,
-// the editor will be hydrated with the content of the note.
-// also we need to add the note id to the url
-// also we need to have the editor focused
-
-// If there is no selection then just show a welcome message and a button to create a new note
+// TODO: first time application open may be create some template notes for the user
+// Instead of blank screen
 
 export function Editor() {
-  const { selectedNote } = useSelectedNoteStore();
+  const {
+    data: selectedNoteData,
+    isLoading: isSelectedNoteLoading,
+    error,
+  } = useGetNoteByParams();
 
-  const [title, setTitle] = useState("Untitled");
+  const { mutateAsync: updateNote, isLoading: isUpdateNoteLoading } =
+    useUpdateNote();
+
+  // TODO: make a call to rename note book name should be debounced
+  const [title, setTitle] = useState(
+    selectedNoteData?.note?.name ?? "Untitled"
+  );
+
   const [saveStatus, setSaveStatus] = useState("Saved");
 
   const [hydrated, setHydrated] = useState(false);
@@ -31,6 +37,15 @@ export function Editor() {
     const json = editor.getJSON();
     setSaveStatus("Saving...");
     // setContent(json);
+    await updateNote({
+      name: title as string,
+      content: JSON.stringify(json),
+      id: selectedNoteData?.note?.id,
+      notebook: selectedNoteData?.note?.notebook as string,
+      tags: selectedNoteData?.note?.tags as string[],
+      type: "note",
+      rev: selectedNoteData?.note?.rev as string,
+    });
     setSaveStatus("Saved");
   }, 750);
 
@@ -127,17 +142,13 @@ export function Editor() {
     };
   }, [stop, isLoading, editor, complete, completion.length]);
 
-  // Hydrate the editor with the content from localStorage.
+  // Hydrate the editor with the content from indexdb.
   useEffect(() => {
-    if (editor && selectedNote.content && !hydrated) {
-      editor.commands.setContent(selectedNote.content);
+    if (editor && selectedNoteData?.note.content && !hydrated) {
+      editor.commands.setContent(selectedNoteData?.note.content);
       setHydrated(true);
     }
-  }, [editor, selectedNote.content, hydrated]);
-
-  if (!selectedNote.id || selectedNote.id.length === 0) {
-    return <div>Show the empty state here</div>;
-  }
+  }, [editor, selectedNoteData, hydrated]);
 
   return (
     <div>

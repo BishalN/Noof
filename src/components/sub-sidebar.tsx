@@ -1,26 +1,26 @@
 "use client";
+import { useParams, useRouter } from "next/navigation";
 
-import {
-  Note,
-  useCreateNote,
-  useGetNotes,
-  useGetNotesBySelection,
-} from "@/db/data";
+import { Note, reldb, useCreateNote, useGetNotes } from "@/db/data";
 import { cn } from "@/lib/utils";
 import { useSelectionStore } from "@/store/selection";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
-import { useMemo } from "react";
-import { useSelectedNoteStore } from "@/store/note-editor-selection-store";
+import { useMemo, useState } from "react";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
   const { selection, setSelection } = useSelectionStore();
+
   const { data: notesData, isLoading: isNotesDataLoading } = useGetNotes();
 
-  const { mutateAsync: createNotebook, isLoading: isCreateNotebookLoading } =
+  const { mutateAsync: createNote, isLoading: isCreateLoading } =
     useCreateNote();
+
+  const [clearLoading, setClearLoading] = useState(false);
+
+  const router = useRouter();
 
   const notes = useMemo(() => {
     if (!selection || !notesData) return [];
@@ -36,11 +36,23 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
   if (isNotesDataLoading) return <div>Loading...</div>;
 
-  const handleCreateNotebook = async () => {
-    console.log("create notebook");
-    const newNote = await createNotebook({
+  const handleCreateNote = async () => {
+    const newNote = await createNote({
       name: "Untitled",
-      content: "Just type",
+      content: `{
+          "type": "doc",
+          "content": [
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Just type"
+                }
+              ]
+            }
+          ]
+        }`,
       type: "note",
       tags: [],
       notebook: selection?.id,
@@ -48,7 +60,14 @@ export function SubSidebar({ className }: SubSidebarProps) {
     // update the selectionStore to add new note to the list
     setSelection({ ...selection, notes: [...selection.notes, newNote.id] });
 
-    // TODO: focus on the editor
+    // push the new note id to the url
+    router.push(`/note/${newNote.id}`);
+  };
+
+  const handleClearDatabase = async () => {
+    setClearLoading(true);
+    await reldb.destroy();
+    setClearLoading(false);
   };
 
   return (
@@ -63,7 +82,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
           <h2 className="px-4 text-center font-semibold tracking-tight">
             {selection?.name}
           </h2>
-          <Button onClick={handleCreateNotebook} variant="ghost" size="icon">
+          <Button onClick={handleCreateNote} variant="ghost" size="icon">
             <CopyPlus className="h-5 w-5 text-gray-600" />
           </Button>
         </div>
@@ -73,21 +92,42 @@ export function SubSidebar({ className }: SubSidebarProps) {
             return <NoteCard key={note.id} {...note} />;
           })}
         </div>
+
+        <button
+          onClick={handleClearDatabase}
+          className="my-4 bg-slate-400 rounded-sm p-2 text-white"
+          disabled={clearLoading}
+        >
+          {clearLoading ? (
+            <div>
+              <span>Clearing Database</span>
+              <div className="animate-spin">🔄</div>
+            </div>
+          ) : (
+            "Reset Database"
+          )}
+        </button>
       </div>
     </div>
   );
 }
 
 export function NoteCard(note: Note) {
-  const { selectedNote, setSelectedNote } = useSelectedNoteStore();
+  const router = useRouter();
+  const { noteId } = useParams();
+
+  // TODO: add a new field to notes as excerpt content
 
   return (
     <div
       className={cn(
         "px-3 py-2 cursor-pointer hover:bg-gray-200",
-        selectedNote.id === note.id && "bg-gray-300"
+        noteId === note.id && "bg-gray-300"
       )}
-      onClick={() => setSelectedNote(note)}
+      onClick={() => {
+        // push to new page
+        router.push(`/note/${note.id}`);
+      }}
     >
       <p className=" font-semibold">{note.name}</p>
       <div className="flex space-x-2 text-muted-foreground">
@@ -103,7 +143,7 @@ export function NoteCard(note: Note) {
           ))}
         </p>
       </div>
-      <p className="text-muted-foreground">{note.content}</p>
+      {/* <p className="text-muted-foreground">{note.content}</p> */}
     </div>
   );
 }

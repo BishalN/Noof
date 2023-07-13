@@ -1,3 +1,9 @@
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { queryClient } from "@/app/providers";
 import { SelectionStore, useSelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -38,6 +44,7 @@ export type Note = {
   id?: string;
   rev?: string;
   name: string;
+  excerpt?: string;
   content: any;
   type: "note";
   notebook: string;
@@ -166,6 +173,7 @@ export const useGetNotes = () => {
 
 type GetNoteResponse = {
   note: Note;
+  notebook: Notebook;
 };
 
 export const useGetNote = (id: string) => {
@@ -184,9 +192,9 @@ export const useUpdateNote = () => {
       const res = await reldb.rel.save("note", note);
       return res;
     },
-    onSuccess: () => {
-      // ["notebook","noteid"]
-      // ["tags","tagid"]
+    onSuccess: ({ id }) => {
+      console.log("Update successfull note", id);
+      queryClient.invalidateQueries({ queryKey: ["note", id] });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notebooks"] });
     },
@@ -297,3 +305,62 @@ export const useGetNotesBySelection = () => {
 // For that reason the indexdb's notebooks should also have the ids of the notes
 
 // react query possible issues
+
+export const useGetNoteByQueryParam = () => {
+  // We're not getting noteId or something
+  const searchParams = useSearchParams();
+  const noteId = searchParams.get("noteId");
+
+  return useQuery<null, Error, GetNoteResponse>({
+    //@ts-ignore
+    queryKey: ["note", noteId],
+    queryFn: async () => {
+      const res = await reldb.rel.find("note", noteId);
+      // TODO: find a better way to do this
+      let content = res.notes[0].content;
+      try {
+        content = JSON.parse(content);
+      } catch (error) {
+        console.log(`JSON parse error for note ${noteId} failed with ${error}`);
+      }
+      const data = {
+        note: {
+          ...res.notes[0],
+          content,
+        },
+        notebook: res.notebooks[0],
+      };
+      return data;
+    },
+    enabled: !!noteId,
+  });
+};
+
+export const useGetNoteByParams = () => {
+  // We're not getting noteId or something
+  const { noteId } = useParams();
+
+  return useQuery<null, Error, GetNoteResponse>({
+    //@ts-ignore
+    queryKey: ["note", noteId],
+    queryFn: async () => {
+      const res = await reldb.rel.find("note", noteId);
+      // TODO: find a better way to do this
+      let content = res.notes[0].content;
+      try {
+        content = JSON.parse(content);
+      } catch (error) {
+        console.log(`JSON parse error for note ${noteId} failed with ${error}`);
+      }
+      const data = {
+        note: {
+          ...res.notes[0],
+          content,
+        },
+        notebook: res.notebooks[0],
+      };
+      return data;
+    },
+    enabled: !!noteId,
+  });
+};

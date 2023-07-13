@@ -62,7 +62,6 @@ export type Comment = {
 export const useCreateBlog = () => {
   return useMutation({
     mutationFn: async (blog: Blog) => {
-      // TODO: do we need to add the blog to the author's blogs array as well?
       const res = await blogDB.rel.save("blog", blog);
       console.log(JSON.stringify(res, null, 2));
       return res;

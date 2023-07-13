@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-// TODO: may be just using query params is good
 export type SelectionStore = {
   selection: {
     id: string;
