@@ -38,12 +38,12 @@ export default function Providers({ children }: { children: ReactNode }) {
       <DBProvider>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
-          <body
+          <main
           // TODO: fix this typescript issue here
           // className={clsx(displayFontMapper[font], defaultFontMapper[font])}
           >
             {children}
-          </body>
+          </main>
         </QueryClientProvider>
       </DBProvider>
       <Analytics />
