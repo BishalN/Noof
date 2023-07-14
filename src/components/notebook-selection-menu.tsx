@@ -66,7 +66,7 @@ export function NotebookSelectionMenu({
           value={notebook}
           onValueChange={handleNoteUpdate}
         >
-          {notebooksData?.notebooks.map((notebook) => {
+          {notebooksData?.notebooks?.map((notebook) => {
             return (
               <DropdownMenuRadioItem
                 key={notebook.id}
