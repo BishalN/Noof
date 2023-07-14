@@ -1,6 +1,6 @@
 import "@/styles/tailwind.css";
 import "@/styles/prosemirror.css";
-// import "@/utils/polyfil";
+import "@/utils/polyfil";
 
 import { Metadata } from "next";
 import { ReactNode } from "react";
