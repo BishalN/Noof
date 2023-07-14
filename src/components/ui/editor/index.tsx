@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import va from "@vercel/analytics";
 import { EditorBubbleMenu } from "./components";
 import { useGetNoteByParams, useUpdateNote } from "@/db/data";
+import { NotebookSelectionMenu } from "@/components/notebook-selection-menu";
+import { AddTagInput } from "@/components/add-tag-input";
+import { DisplayTags } from "@/components/display-tags";
 
 // TODO: first time application open may be create some template notes for the user
 // Instead of blank screen
@@ -160,6 +163,14 @@ export function Editor() {
           placeholder="Untitled"
           className="w-full text-2xl font-bold text-stone-500 bg-transparent border-none outline-none"
         />
+        <div className="flex space-x-1 items-center">
+          <NotebookSelectionMenu
+            currentNotebookName={selectedNoteData?.notebook.name!}
+            note={selectedNoteData?.note!}
+          />
+          <DisplayTags tagIds={selectedNoteData?.note.tags!} />
+          <AddTagInput note={selectedNoteData?.note!} />
+        </div>
       </div>
       <div
         onClick={() => {
