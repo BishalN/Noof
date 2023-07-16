@@ -22,7 +22,7 @@ export function NoteCardWithContextMenu({
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { noteId } = useParams();
+  const { noteId, notebookId, tagId } = useParams();
   const router = useRouter();
 
   return (
@@ -48,7 +48,7 @@ export function NoteCardWithContextMenu({
             )}
             onClick={() => {
               // push to new page
-              router.push(`/note/${note.id}`);
+              router.push(`/notebook/${notebookId}/note/${note.id}`);
             }}
           >
             <p className=" font-semibold">{note.name}</p>

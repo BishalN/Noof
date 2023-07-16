@@ -63,7 +63,6 @@ export const useCreateBlog = () => {
   return useMutation({
     mutationFn: async (blog: Blog) => {
       const res = await blogDB.rel.save("blog", blog);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     onSuccess: () => {
@@ -76,7 +75,6 @@ export const useCreateAuthor = () => {
   return useMutation({
     mutationFn: async (author: Author) => {
       const res = await blogDB.rel.save("author", author);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     onSuccess: () => {
@@ -89,7 +87,6 @@ export const useCreateComment = () => {
   return useMutation({
     mutationFn: async (comment: Comment) => {
       const res = await blogDB.rel.save("comment", comment);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     onSuccess: () => {
@@ -105,7 +102,6 @@ export const useGetBlogs = () => {
   return useQuery<null, Error, GetBlogsResponse>({
     queryFn: async () => {
       const res = await blogDB.rel.find("blog");
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["blogs"],
@@ -119,7 +115,6 @@ export const useGetBlog = (id: string) => {
   return useQuery<string, Error, GetBlogResponse>({
     queryFn: async (id) => {
       const res = await blogDB.rel.find("blog", id);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["blog", id],
@@ -133,7 +128,6 @@ export const useGetAuthors = () => {
   return useQuery<null, Error, GetAuthorsResponse>({
     queryFn: async () => {
       const res = await blogDB.rel.find("author");
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["authors"],
@@ -147,7 +141,6 @@ export const useGetAuthor = (id: string) => {
   return useQuery<string, Error, GetAuthorResponse>({
     queryFn: async (id) => {
       const res = await blogDB.rel.find("author", id);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["author", id],
@@ -161,7 +154,6 @@ export const useGetComments = () => {
   return useQuery<null, Error, GetCommentsResponse[]>({
     queryFn: async () => {
       const res = await blogDB.rel.find("comment");
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["comments"],
@@ -175,7 +167,6 @@ export const useGetComment = (id: string) => {
   return useQuery<string, Error, GetCommentResponse>({
     queryFn: async (id) => {
       const res = await blogDB.rel.find("comment", id);
-      console.log(JSON.stringify(res, null, 2));
       return res;
     },
     queryKey: ["comment", id],

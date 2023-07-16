@@ -1,8 +1,7 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 import {
-  Note,
   RelationalIndexDBContext,
   useCreateNote,
   useGetNotes,
@@ -12,13 +11,26 @@ import { useSelectionStore } from "@/store/selection";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
 import { useContext, useMemo, useState } from "react";
-import { DisplayTags, DisplayTagsOnNoteCard } from "./display-tags";
 import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
+// TODO: use the params to determine which notebook is selected
+// so that means we need to change our structure a little as
+// /notebook/[notebookId]/note/[noteId]
+// /tag/[tagsId]/note/[noteId]
+
+// current navigation structure:
+// /note/[noteId]
 export function SubSidebar({ className }: SubSidebarProps) {
   const { reldb } = useContext(RelationalIndexDBContext);
+
+  const { notebookId, noteId, tagsId } = useParams();
+  const path = usePathname();
+
+  console.log(
+    `notebookId: ${notebookId}, noteId: ${noteId}, tagsId: ${tagsId}`
+  );
 
   const { selection, setSelection } = useSelectionStore();
 
@@ -32,16 +44,12 @@ export function SubSidebar({ className }: SubSidebarProps) {
   const router = useRouter();
 
   const notes = useMemo(() => {
-    if (!selection || !notesData) return [];
-    if (selection.type === "tag") {
-      return notesData?.notes.filter(
-        (note) =>
-          note.tags.includes(selection.id) ||
-          selection.notes.includes(note.id as string)
-      );
+    if (!notebookId || !notesData) return [];
+    if (path.includes("tag")) {
+      return notesData?.notes.filter((note) => note.tags.includes(notebookId));
     }
-    return notesData?.notes.filter((note) => note.notebook === selection.id);
-  }, [selection, notesData]);
+    return notesData?.notes.filter((note) => note.notebook === notebookId);
+  }, [notebookId, notesData, path]);
 
   if (isNotesDataLoading) return <div>Loading...</div>;
 
@@ -70,7 +78,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
     setSelection({ ...selection, notes: [...selection.notes, newNote.id] });
 
     // push the new note id to the url
-    router.push(`/note/${newNote.id}`);
+    router.push(`/notebook/${notebookId}/note/${newNote.id}`);
   };
 
   const handleClearDatabase = async () => {
@@ -121,31 +129,4 @@ export function SubSidebar({ className }: SubSidebarProps) {
   );
 }
 
-export function NoteCard(note: Note) {
-  const router = useRouter();
-  const { noteId } = useParams();
-
-  // TODO: add a new field to notes as excerpt content
-
-  return (
-    <div
-      className={cn(
-        "px-3 py-2 cursor-pointer hover:bg-gray-200",
-        noteId === note.id && "bg-gray-300"
-      )}
-      onClick={() => {
-        // push to new page
-        router.push(`/note/${note.id}`);
-      }}
-    >
-      <p className=" font-semibold">{note.name}</p>
-      <div className="flex space-x-2 text-muted-foreground">
-        <p>2 hours ago</p>
-        <p className="space-x-3">
-          <DisplayTagsOnNoteCard tagIds={note.tags} />
-        </p>
-      </div>
-      {/* <p className="text-muted-foreground">{note.content}</p> */}
-    </div>
-  );
-}
+// TODO: add a new field to notes as excerpt content

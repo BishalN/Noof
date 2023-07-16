@@ -225,7 +225,6 @@ export const useUpdateNote = () => {
       return res;
     },
     onSuccess: ({ id }) => {
-      console.log("Update successfull note", id);
       queryClient.invalidateQueries({ queryKey: ["note", id] });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notebooks"] });
@@ -328,14 +327,7 @@ export const useGetNotesBySelection = () => {
     queryKey: [selection.type, selection.id],
     queryFn: async () => {
       const res = await reldb.rel.find("note", selection.notes);
-      console.log(
-        "useGetNotesBySelection-Input",
-        JSON.stringify(selection, null, 2)
-      );
-      console.log(
-        "useGetNotesBySelection-Output",
-        JSON.stringify(res, null, 2)
-      );
+
       return res;
     },
     cacheTime: 0,

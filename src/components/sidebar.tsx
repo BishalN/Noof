@@ -1,30 +1,16 @@
 "use client";
 
-import {
-  ScrollTextIcon,
-  BookIcon,
-  TagsIcon,
-  PlusIcon,
-  PlusCircleIcon,
-} from "lucide-react";
+import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useContext, useState } from "react";
 import { useSelectionStore } from "@/store/selection";
-import {
-  RelationalIndexDBContext,
-  useGetNotebooks,
-  useGetTags,
-} from "@/db/data";
-import { Button } from "./ui/button";
+import { useGetNotebooks, useGetTags } from "@/db/data";
 import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
-  const { reldb } = useContext(RelationalIndexDBContext);
-
   const { data: notebooksData, isLoading: isNotebooksDataLoading } =
     useGetNotebooks();
   const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();

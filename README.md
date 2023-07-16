@@ -91,6 +91,8 @@ db.setSchema([
 
 - Fix the title in note editor page -> done
 
+- when there is no {noteId} in param render a 404 page in editor section
+
 - Tags routing fix similar to of notebooks
 - Proper onboarding flow for user
 - Smooth Transition from one note to other or even one notebook to other or tags

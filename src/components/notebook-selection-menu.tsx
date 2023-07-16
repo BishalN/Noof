@@ -24,11 +24,6 @@ export function NotebookSelectionMenu({
   currentNotebookName,
   note,
 }: NotebookSelectionMenuProps) {
-  console.log(
-    `NotebookSelectionMenu`,
-    currentNotebookName,
-    JSON.stringify(note, null, 2)
-  );
   const [notebook, setNotebook] = React.useState("");
 
   const { mutateAsync: updateNote, isLoading: isUpdateNotebookLoading } =
