@@ -32,6 +32,23 @@ export function Editor() {
     selectedNoteData?.note?.name ?? "Untitled"
   );
 
+  const debouncedTitleUpdates = useDebouncedCallback(async () => {
+    await updateNote({
+      name: title,
+      content: selectedNoteData?.note?.content,
+      id: selectedNoteData?.note?.id,
+      notebook: selectedNoteData?.note?.notebook as string,
+      tags: selectedNoteData?.note?.tags as string[],
+      type: "note",
+      rev: selectedNoteData?.note?.rev,
+    });
+  }, 750);
+
+  const handleNoteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+    debouncedTitleUpdates();
+  };
+
   const [saveStatus, setSaveStatus] = useState("Saved");
 
   const [hydrated, setHydrated] = useState(false);
@@ -159,7 +176,7 @@ export function Editor() {
         <input
           type="text"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={handleNoteNameChange}
           placeholder="Untitled"
           className="w-full text-2xl font-bold text-stone-500 bg-transparent border-none outline-none"
         />

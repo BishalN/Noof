@@ -89,9 +89,13 @@ db.setSchema([
 
 ## Tasks to do
 
-- [ ] Create a hook for storing notes to pouchdb
+- Fix the title in note editor page -> done
 
-- allow users to select either the notebook or tag and let that affect the subsidebar
-- for that we'll need to have state manager or local storage
+- Tags routing fix similar to of notebooks
+- Proper onboarding flow for user
+- Smooth Transition from one note to other or even one notebook to other or tags
+- Show a 404 for not found notes in editor page
 
-- We have to fetch all notes belonging either to a notebook or a tag
+- Add a feedback button in bottom right corner to github issue
+- Mobile ui for sidebar
+- Add a search bar in sidebar just like notion search with note, tags, notebooks
