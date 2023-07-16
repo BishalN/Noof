@@ -26,11 +26,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
   const { reldb } = useContext(RelationalIndexDBContext);
 
   const { notebookId, noteId, tagsId } = useParams();
-  const path = usePathname();
-
-  console.log(
-    `notebookId: ${notebookId}, noteId: ${noteId}, tagsId: ${tagsId}`
-  );
 
   const { selection, setSelection } = useSelectionStore();
 
@@ -44,12 +39,14 @@ export function SubSidebar({ className }: SubSidebarProps) {
   const router = useRouter();
 
   const notes = useMemo(() => {
-    if (!notebookId || !notesData) return [];
-    if (path.includes("tag")) {
-      return notesData?.notes.filter((note) => note.tags.includes(notebookId));
+    // for path /tag/[tagsId]/note/[noteId]
+    if (tagsId) {
+      return notesData?.notes.filter((note) => note.tags.includes(tagsId));
     }
+
+    // for path /notebook/[notebookId]/note/[noteId]
     return notesData?.notes.filter((note) => note.notebook === notebookId);
-  }, [notebookId, notesData, path]);
+  }, [notebookId, notesData, tagsId]);
 
   if (isNotesDataLoading) return <div>Loading...</div>;
 
@@ -71,13 +68,18 @@ export function SubSidebar({ className }: SubSidebarProps) {
           ]
         }`,
       type: "note",
-      tags: [],
+      tags: [tagsId ? tagsId : ""],
       notebook: selection?.id,
     });
     // update the selectionStore to add new note to the list
     setSelection({ ...selection, notes: [...selection.notes, newNote.id] });
 
     // push the new note id to the url
+    // handle the case where we are in the tagsId path
+    if (tagsId) {
+      router.push(`/tag/${tagsId}/note/${newNote.id}`);
+      return;
+    }
     router.push(`/notebook/${notebookId}/note/${newNote.id}`);
   };
 
@@ -105,7 +107,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
         </div>
 
         <div className="space-y-1">
-          {notes.map((note) => {
+          {notes?.map((note) => {
             return <NoteCardWithContextMenu key={note.id} note={note} />;
           })}
         </div>

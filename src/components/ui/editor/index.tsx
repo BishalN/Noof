@@ -190,7 +190,7 @@ export function Editor() {
         />
         <div className="flex space-x-1 items-center">
           <NotebookSelectionMenu
-            currentNotebookName={selectedNoteData?.notebook.name!}
+            currentNotebookName={selectedNoteData?.notebook?.name!}
             note={selectedNoteData?.note!}
           />
           <DisplayTags tagIds={selectedNoteData?.note.tags!} />

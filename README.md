@@ -91,7 +91,9 @@ db.setSchema([
 
 - Fix the title in note editor page -> done
 
-- when there is no {noteId} in param render a 404 page in editor section
+- when there is no {noteId} in param render a 404 page in editor section -> done
+- select tags from exisiting tags in note editor page
+- if i create a note inside a tag, then that note should be added to that tag -> done
 
 - Tags routing fix similar to of notebooks
 - Proper onboarding flow for user

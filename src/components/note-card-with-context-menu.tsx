@@ -22,7 +22,7 @@ export function NoteCardWithContextMenu({
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { noteId, notebookId, tagId } = useParams();
+  const { noteId, notebookId, tagsId } = useParams();
   const router = useRouter();
 
   return (
@@ -47,16 +47,19 @@ export function NoteCardWithContextMenu({
               noteId === note.id && "bg-gray-300"
             )}
             onClick={() => {
-              // push to new page
+              if (tagsId) {
+                router.push(`/tag/${tagsId}/note/${note.id}`);
+                return;
+              }
               router.push(`/notebook/${notebookId}/note/${note.id}`);
             }}
           >
             <p className=" font-semibold">{note.name}</p>
             <div className="flex space-x-2 text-muted-foreground">
               <p>2 hours ago</p>
-              <p className="space-x-3">
+              <div className="space-x-3">
                 <DisplayTagsOnNoteCard tagIds={note.tags} />
-              </p>
+              </div>
             </div>
             {/* <p className="text-muted-foreground">{note.content}</p> */}
           </div>

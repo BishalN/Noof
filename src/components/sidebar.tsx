@@ -7,6 +7,7 @@ import { useSelectionStore } from "@/store/selection";
 import { useGetNotebooks, useGetTags } from "@/db/data";
 import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
+import { TagItemWithContextMenu } from "./tag-item-with-context-menu";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -63,22 +64,7 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="space-y-1 pl-12 pr-4">
             <ol className="list-disc">
               {tagsData?.tags.map((tag) => (
-                <li
-                  key={tag.id}
-                  onClick={() =>
-                    setSelection({
-                      ...tag,
-                      id: tag.id as string,
-                    })
-                  }
-                  className={cn(
-                    "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
-                    selection?.id === tag.id && "bg-slate-300"
-                  )}
-                >
-                  <span>{tag.name}</span>
-                  <span>{tag.notes?.length || "0"}</span>
-                </li>
+                <TagItemWithContextMenu key={tag.id} tag={tag} />
               ))}
             </ol>
           </div>
