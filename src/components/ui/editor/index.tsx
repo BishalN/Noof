@@ -180,7 +180,7 @@ export function Editor() {
 
   return (
     <div>
-      <div>
+      <div className="mb-4">
         <input
           type="text"
           value={title}
