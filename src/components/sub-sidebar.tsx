@@ -12,6 +12,8 @@ import { useSelectionStore } from "@/store/selection";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
 import { useContext, useMemo, useState } from "react";
+import { DisplayTags, DisplayTagsOnNoteCard } from "./display-tags";
+import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -96,7 +98,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
         <div className="space-y-1">
           {notes.map((note) => {
-            return <NoteCard key={note.id} {...note} />;
+            return <NoteCardWithContextMenu key={note.id} note={note} />;
           })}
         </div>
 
@@ -140,14 +142,7 @@ export function NoteCard(note: Note) {
       <div className="flex space-x-2 text-muted-foreground">
         <p>2 hours ago</p>
         <p className="space-x-3">
-          {note.tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-gray-300 text-gray-600 rounded-sm px-1"
-            >
-              {tag}
-            </span>
-          ))}
+          <DisplayTagsOnNoteCard tagIds={note.tags} />
         </p>
       </div>
       {/* <p className="text-muted-foreground">{note.content}</p> */}

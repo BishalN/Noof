@@ -10,33 +10,33 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Notebook, useUpdateNotebook } from "@/db/data";
+import { Note, useUpdateNote } from "@/db/data";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
-interface RenameNotebookProps {
-  notebook: Notebook;
+interface RenameNoteProps {
+  note: Note;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }
-export function RenameNotebook({
-  notebook,
+export function RenameNoteDialog({
+  note,
   isOpen,
   onOpenChange,
-}: RenameNotebookProps) {
-  const [notebookName, setNotebookName] = useState(notebook.name);
-  const { mutateAsync: updateNotebook, isLoading } = useUpdateNotebook();
-  const handleRenameNotebook = async () => {
-    if (!notebookName) return;
-    await updateNotebook({ ...notebook, name: notebookName });
-    setNotebookName("");
+}: RenameNoteProps) {
+  const [noteName, setNoteName] = useState(note.name);
+  const { mutateAsync: updateNote, isLoading } = useUpdateNote();
+  const handleRenameNote = async () => {
+    if (!noteName) return;
+    await updateNote({ ...note, name: noteName });
+    setNoteName("");
     onOpenChange(false);
   };
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Rename Notebook</DialogTitle>
+          <DialogTitle>Rename Note Name</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -45,18 +45,14 @@ export function RenameNotebook({
             </Label>
             <Input
               id="name"
-              value={notebookName}
-              onChange={(e) => setNotebookName(e.target.value)}
+              value={noteName}
+              onChange={(e) => setNoteName(e.target.value)}
               className="col-span-3"
             />
           </div>
         </div>
         <DialogFooter>
-          <Button
-            onClick={handleRenameNotebook}
-            type="submit"
-            disabled={isLoading}
-          >
+          <Button onClick={handleRenameNote} type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

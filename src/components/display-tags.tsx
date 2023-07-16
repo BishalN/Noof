@@ -27,9 +27,11 @@ export function DisplayTags({ tagIds }: DisplayTagsProps) {
   return (
     <div className="flex flex-wrap gap-2 cursor-pointer">
       {tags?.map((tag) => (
-        <Menubar className="" key={tag.id}>
+        <Menubar className="bg-pink-300 rounded-full" key={tag.id}>
           <MenubarMenu>
-            <MenubarTrigger className="outline-none">{tag.name}</MenubarTrigger>
+            <MenubarTrigger className="bg-transparent">
+              {tag.name}
+            </MenubarTrigger>
             <MenubarContent>
               <MenubarItem
                 className="outline-none"
@@ -44,3 +46,21 @@ export function DisplayTags({ tagIds }: DisplayTagsProps) {
     </div>
   );
 }
+
+export const DisplayTagsOnNoteCard = ({ tagIds }: DisplayTagsProps) => {
+  const { data: tagsData, isLoading } = useGetTags();
+
+  const tags = useMemo(() => {
+    return tagsData?.tags.filter((tag) => tagIds?.includes(tag.id as string));
+  }, [tagsData, tagIds]);
+
+  return (
+    <div className="flex flex-wrap space-y-2 space-x-2">
+      {tags?.map((tag) => (
+        <p key={tag.id} className="bg-pink-300 text-black px-2 rounded-full">
+          {tag.name}
+        </p>
+      ))}
+    </div>
+  );
+};
