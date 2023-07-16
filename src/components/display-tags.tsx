@@ -1,4 +1,4 @@
-import { Note, Tag, useDeleteTag, useGetTag, useGetTags } from "@/db/data";
+import { Note, Tag, useDeleteTag, useGetTags } from "@/db/data";
 
 import {
   Menubar,
@@ -7,6 +7,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { useMemo } from "react";
 
 interface DisplayTagsProps {
   tagIds: string[];
@@ -18,12 +19,14 @@ export function DisplayTags({ tagIds }: DisplayTagsProps) {
   const handleDeleteTag = async (tag: Tag) => {
     await deleteTag(tag);
   };
-  const tags = tagsData?.tags.filter((tag) =>
-    tagIds.includes(tag.id as string)
-  );
+
+  const tags = useMemo(() => {
+    return tagsData?.tags.filter((tag) => tagIds?.includes(tag.id as string));
+  }, [tagsData, tagIds]);
+
   return (
     <div className="flex flex-wrap gap-2 cursor-pointer">
-      {tags!.map((tag) => (
+      {tags?.map((tag) => (
         <Menubar className="" key={tag.id}>
           <MenubarMenu>
             <MenubarTrigger className="outline-none">{tag.name}</MenubarTrigger>
