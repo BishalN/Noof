@@ -101,3 +101,5 @@ db.setSchema([
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
 
 - there is a loading state so take care of it in production it seems to be serious issue there
+
+- redirect the user to notes page if there are notes available

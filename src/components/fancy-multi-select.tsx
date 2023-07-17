@@ -6,7 +6,14 @@ import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
-import { Note, Tag, useCreateTag, useGetTags, useUpdateNote } from "@/db/data";
+import {
+  Note,
+  Tag,
+  useCreateTag,
+  useGetTags,
+  useUpdateNote,
+  useUpdateTag,
+} from "@/db/data";
 
 interface FancyMultiSelectProps {
   note: Note;
@@ -19,6 +26,7 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
 
   const { mutateAsync: createTag } = useCreateTag();
   const { mutateAsync: updateNote } = useUpdateNote();
+  const { mutateAsync: updateTag } = useUpdateTag();
 
   const { data: tagsData } = useGetTags();
 
@@ -29,10 +37,15 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
     );
   }, [tagsData, inputValue]);
 
-  const [selected, setSelected] = React.useState<Tag[]>(tagsSuggestions);
+  const selectedTags = React.useMemo(() => {
+    if (!tagsData?.tags) return [];
+    return tagsData?.tags.filter((tag) => note?.tags.includes(tag.id!));
+  }, [tagsData, note?.tags]);
 
-  // Do this if user selects tag from selection menu
-  const handleAddTagToNote = async (selectedTag: Tag) => {
+  const [selected, setSelected] = React.useState<Tag[]>(selectedTags);
+
+  const handleSelect = async (selectedTag: Tag) => {
+    setInputValue("");
     await updateNote({
       name: note.name,
       content: note.content,
@@ -42,33 +55,58 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
       rev: note.rev,
       type: "note",
     });
+    setSelected((prev) => [...prev, selectedTag]);
     setInputValue("");
   };
 
   const handleCreateAndAddTagToNote = async () => {
     console.log("create and add tag to note");
-    if (inputValue === "") return;
+    if (inputRef?.current?.value.trim() === "") {
+      console.log("input value is empty");
+      return;
+    }
+
     const tagRes = await createTag({
-      name: inputValue,
+      name: inputRef?.current?.value!,
       type: "tag",
       notes: [note.id as string],
     });
+
+    // TODO: fix document update conflict here
+    // await updateNote({
+    //   name: note.name,
+    //   content: note.content,
+    //   id: note.id,
+    //   notebook: note.notebook,
+    //   tags: [...note?.tags, tagRes.id],
+    //   rev: note.rev,
+    //   type: "note",
+    // });
+    setInputValue("");
+  };
+
+  const handleUnselect = async (tag: Tag) => {
     await updateNote({
       name: note.name,
       content: note.content,
       id: note.id,
       notebook: note.notebook,
-      tags: [...note.tags, tagRes.id],
+      tags: note.tags.filter((t) => t !== tag.id),
       rev: note.rev,
       type: "note",
     });
-    setInputValue("");
-  };
 
-  const handleUnselect = React.useCallback((tag: Tag) => {
-    // TODO: remove it from db as well
+    // also update the tags side
+    await updateTag({
+      name: tag.name,
+      id: tag.id,
+      notes: tag.notes.filter((n) => n !== note.id),
+      rev: tag.rev,
+      type: "tag",
+    });
+
     setSelected((prev) => prev.filter((s) => s.id !== tag.id));
-  }, []);
+  };
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -97,13 +135,16 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
     []
   );
 
-  // TODO: using id is better than using the name
-  const selectables = tagsSuggestions.filter((tag) => !selected.includes(tag));
+  const selectables = React.useMemo(() => {
+    return tagsSuggestions.filter((tag) => {
+      return !selected.find((s) => s.id === tag.id);
+    });
+  }, [tagsSuggestions, selected]);
 
   return (
     <Command
       onKeyDown={handleKeyDown}
-      className="overflow-visible bg-transparent"
+      className="border-none max-w-xl overflow-visible bg-transparent"
     >
       <div className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <div className="flex gap-1 flex-wrap">
@@ -136,7 +177,7 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
             onValueChange={setInputValue}
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
-            placeholder="Select tags.."
+            placeholder="Select or Create tags.."
             className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
           />
         </div>
@@ -153,9 +194,8 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
-                    onSelect={(value) => {
-                      setInputValue("");
-                      setSelected((prev) => [...prev, tag]);
+                    onSelect={() => {
+                      handleSelect(tag);
                     }}
                     className={"cursor-pointer"}
                   >

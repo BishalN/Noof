@@ -14,6 +14,7 @@ import { NotebookSelectionMenu } from "@/components/notebook-selection-menu";
 import { AddTagInput } from "@/components/add-tag-input";
 import { DisplayTags } from "@/components/display-tags";
 import { useParams } from "next/navigation";
+import { FancyMultiSelect } from "@/components/fancy-multi-select";
 
 // TODO: first time application open may be create some template notes for the user
 // Instead of blank screen
@@ -193,8 +194,9 @@ export function Editor() {
             currentNotebookName={selectedNoteData?.notebook?.name!}
             note={selectedNoteData?.note!}
           />
-          <DisplayTags tagIds={selectedNoteData?.note.tags!} />
-          <AddTagInput note={selectedNoteData?.note!} />
+          {/* <DisplayTags tagIds={selectedNoteData?.note.tags!} />
+          <AddTagInput note={selectedNoteData?.note!} /> */}
+          <FancyMultiSelect note={selectedNoteData?.note!} />
         </div>
       </div>
       <div
