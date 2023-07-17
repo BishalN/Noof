@@ -1,5 +1,6 @@
 import "@/styles/tailwind.css";
 import "@/styles/prosemirror.css";
+import "@/utils/polyfil";
 
 import { Metadata } from "next";
 import { ReactNode } from "react";
@@ -29,7 +30,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <Providers>{children}</Providers>
+      <head />
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

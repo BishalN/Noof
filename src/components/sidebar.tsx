@@ -1,10 +1,21 @@
+"use client";
+
 import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { useSelectionStore } from "@/store/selection";
+import { useGetNotebooks, useGetTags } from "@/db/data";
+import { CreateNotebookDialog } from "./create-notebook-dialog";
+import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
+import { TagItemWithContextMenu } from "./tag-item-with-context-menu";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
+  const { data: notebooksData, isLoading: isNotebooksDataLoading } =
+    useGetNotebooks();
+  const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();
+  const { selection, setSelection } = useSelectionStore();
   return (
     <div
       className={cn(
@@ -19,31 +30,26 @@ export function Sidebar({ className }: SidebarProps) {
               <ScrollTextIcon className="mr-2 h-4 w-4" />
               <span>All Notes</span>
             </div>
-            <span>3</span>
+            <span>{notebooksData?.notebooks.length || "0"}</span>
           </h2>
         </div>
 
         <div className="px-3">
-          <h2 className="mb-2 px-4 font-semibold tracking-tight flex justify-between">
+          <h2 className="mb-2 px-4 font-semibold tracking-tight flex justify-between items-center">
             <div className="flex items-center">
               <BookIcon className="mr-2 h-4 w-4" />
               <span>Notebooks</span>
             </div>
+            <CreateNotebookDialog />
           </h2>
 
           <div className="space-y-1 pl-12 pr-4">
-            <p className="flex justify-between">
-              <span>First Notebook</span>
-              <span>2</span>
-            </p>
-            <p className="flex justify-between">
-              <span>Engineering daybook</span>
-              <span>100</span>
-            </p>
-            <p className="flex justify-between">
-              <span>Engineering daybook</span>
-              <span>100</span>
-            </p>
+            {notebooksData?.notebooks.map((notebook) => (
+              <NotebookItemWithContextMenu
+                notebook={notebook}
+                key={notebook.id}
+              />
+            ))}
           </div>
         </div>
 
@@ -57,18 +63,9 @@ export function Sidebar({ className }: SidebarProps) {
 
           <div className="space-y-1 pl-12 pr-4">
             <ol className="list-disc">
-              <li className="flex justify-between">
-                <span>First Notebook</span>
-                <span>2</span>
-              </li>
-              <li className="flex justify-between">
-                <span>First Notebook</span>
-                <span>2</span>
-              </li>
-              <li className="flex justify-between">
-                <span>First Notebook</span>
-                <span>2</span>
-              </li>
+              {tagsData?.tags.map((tag) => (
+                <TagItemWithContextMenu key={tag.id} tag={tag} />
+              ))}
             </ol>
           </div>
         </div>

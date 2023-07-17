@@ -1,23 +1,54 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { TiptapEditorProps } from "./props";
 import { TiptapExtensions } from "./extensions";
-import useLocalStorage from "@/lib/hooks/use-local-storage";
 import { useDebouncedCallback } from "use-debounce";
 import { useCompletion } from "ai/react";
 import { toast } from "sonner";
 import va from "@vercel/analytics";
-import DEFAULT_EDITOR_CONTENT from "./default-content";
 import { EditorBubbleMenu } from "./components";
-import { Input } from "../input";
+import { useGetNoteByParams, useUpdateNote } from "@/db/data";
+import { NotebookSelectionMenu } from "@/components/notebook-selection-menu";
+import { useParams } from "next/navigation";
+import { FancyMultiSelect } from "@/components/fancy-multi-select";
 
+// TODO: first time application open may be create some template notes for the user
+// Instead of blank screen
 export function Editor() {
-  const [content, setContent] = useLocalStorage(
-    "content",
-    DEFAULT_EDITOR_CONTENT
+  const {
+    data: selectedNoteData,
+    isLoading: isSelectedNoteLoading,
+    error,
+  } = useGetNoteByParams();
+
+  const { mutateAsync: updateNote, isLoading: isUpdateNoteLoading } =
+    useUpdateNote();
+
+  const [title, setTitle] = useState(
+    selectedNoteData?.note?.name ?? "Untitled"
   );
+
+  const { noteId } = useParams();
+
+  const debouncedTitleUpdates = useDebouncedCallback(async () => {
+    await updateNote({
+      name: title,
+      content: selectedNoteData?.note?.content,
+      id: selectedNoteData?.note?.id,
+      notebook: selectedNoteData?.note?.notebook as string,
+      tags: selectedNoteData?.note?.tags as string[],
+      type: "note",
+      rev: selectedNoteData?.note?.rev,
+    });
+  }, 750);
+
+  const handleNoteNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+    debouncedTitleUpdates();
+  };
+
   const [saveStatus, setSaveStatus] = useState("Saved");
 
   const [hydrated, setHydrated] = useState(false);
@@ -25,11 +56,17 @@ export function Editor() {
   const debouncedUpdates = useDebouncedCallback(async ({ editor }) => {
     const json = editor.getJSON();
     setSaveStatus("Saving...");
-    setContent(json);
-    // Simulate a delay in saving.
-    setTimeout(() => {
-      setSaveStatus("Saved");
-    }, 500);
+    // setContent(json);
+    await updateNote({
+      name: title as string,
+      content: JSON.stringify(json),
+      id: selectedNoteData?.note?.id,
+      notebook: selectedNoteData?.note?.notebook as string,
+      tags: selectedNoteData?.note?.tags as string[],
+      type: "note",
+      rev: selectedNoteData?.note?.rev as string,
+    });
+    setSaveStatus("Saved");
   }, 750);
 
   const editor = useEditor({
@@ -125,22 +162,36 @@ export function Editor() {
     };
   }, [stop, isLoading, editor, complete, completion.length]);
 
-  // Hydrate the editor with the content from localStorage.
+  // Hydrate the editor with the content from indexdb.
   useEffect(() => {
-    if (editor && content && !hydrated) {
-      editor.commands.setContent(content);
+    if (editor && selectedNoteData?.note.content && !hydrated) {
+      editor.commands.setContent(selectedNoteData?.note.content);
       setHydrated(true);
     }
-  }, [editor, content, hydrated]);
+  }, [editor, selectedNoteData, hydrated]);
+
+  if (!noteId) {
+    // TODO: make a proper empty state for this
+    return <div>Please select or create a new note to start editing</div>;
+  }
 
   return (
     <div>
-      <div>
+      <div className="mb-4">
         <input
           type="text"
+          value={title}
+          onChange={handleNoteNameChange}
           placeholder="Untitled"
           className="w-full text-2xl font-bold text-stone-500 bg-transparent border-none outline-none"
         />
+        <div className="flex space-x-2 items-center ">
+          <NotebookSelectionMenu
+            currentNotebookName={selectedNoteData?.notebook?.name!}
+            note={selectedNoteData?.note!}
+          />
+          <FancyMultiSelect note={selectedNoteData?.note!} />
+        </div>
       </div>
       <div
         onClick={() => {
