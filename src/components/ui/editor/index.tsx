@@ -11,14 +11,11 @@ import va from "@vercel/analytics";
 import { EditorBubbleMenu } from "./components";
 import { useGetNoteByParams, useUpdateNote } from "@/db/data";
 import { NotebookSelectionMenu } from "@/components/notebook-selection-menu";
-import { AddTagInput } from "@/components/add-tag-input";
-import { DisplayTags } from "@/components/display-tags";
 import { useParams } from "next/navigation";
 import { FancyMultiSelect } from "@/components/fancy-multi-select";
 
 // TODO: first time application open may be create some template notes for the user
 // Instead of blank screen
-
 export function Editor() {
   const {
     data: selectedNoteData,
@@ -29,7 +26,6 @@ export function Editor() {
   const { mutateAsync: updateNote, isLoading: isUpdateNoteLoading } =
     useUpdateNote();
 
-  // TODO: make a call to rename note book name should be debounced
   const [title, setTitle] = useState(
     selectedNoteData?.note?.name ?? "Untitled"
   );
@@ -194,8 +190,6 @@ export function Editor() {
             currentNotebookName={selectedNoteData?.notebook?.name!}
             note={selectedNoteData?.note!}
           />
-          {/* <DisplayTags tagIds={selectedNoteData?.note.tags!} />
-          <AddTagInput note={selectedNoteData?.note!} /> */}
           <FancyMultiSelect note={selectedNoteData?.note!} />
         </div>
       </div>

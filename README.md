@@ -89,7 +89,6 @@ db.setSchema([
 
 ## Tasks to do
 
-- select tags from exisiting tags in note editor page
 - use proper layout system for whole app rather than having everything in page file
 - add loading components to all place
 

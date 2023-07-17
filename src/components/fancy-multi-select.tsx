@@ -66,10 +66,12 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
       return;
     }
 
+    console.log(`note is`, JSON.stringify(note, null, 2));
+
     const tagRes = await createTag({
       name: inputRef?.current?.value!,
       type: "tag",
-      notes: [note.id as string],
+      notes: [note?.id as string],
     });
 
     // TODO: fix document update conflict here

@@ -379,7 +379,6 @@ export const useGetNoteByQueryParam = () => {
 export const useGetNoteByParams = () => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
-  // We're not getting noteId or something
   const { noteId } = useParams();
 
   return useQuery<null, Error, GetNoteResponse>({
