@@ -2,7 +2,6 @@
 
 import { Note, useCreateTag, useUpdateNote } from "@/db/data";
 import { FormEventHandler, useState } from "react";
-import { TagSuggestionPopover } from "./tag-suggestion-popover";
 
 interface AddTagInputProps {
   note: Note;
@@ -49,11 +48,6 @@ export function AddTagInput({ note }: AddTagInputProps) {
         onChange={(e) => setTag(e.target.value)}
         placeholder="Add tag"
         className="inline-block max-w-[150px] border-none outline-none ring-0 focus:ring-0 focus:outline-none"
-      />
-      <TagSuggestionPopover
-        open={tag.trim().length > 0}
-        search={tag.trim()}
-        note={note}
       />
     </form>
   );

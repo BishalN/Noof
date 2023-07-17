@@ -89,17 +89,15 @@ db.setSchema([
 
 ## Tasks to do
 
-- Fix the title in note editor page -> done
-
-- when there is no {noteId} in param render a 404 page in editor section -> done
 - select tags from exisiting tags in note editor page
-- if i create a note inside a tag, then that note should be added to that tag -> done
+- use proper layout system for whole app rather than having everything in page file
+- add loading components to all place
 
-- Tags routing fix similar to of notebooks
 - Proper onboarding flow for user
 - Smooth Transition from one note to other or even one notebook to other or tags
-- Show a 404 for not found notes in editor page
 
 - Add a feedback button in bottom right corner to github issue
 - Mobile ui for sidebar
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
+
+- there is a loading state so take care of it in production it seems to be serious issue there
