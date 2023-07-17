@@ -3,7 +3,6 @@
 import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useSelectionStore } from "@/store/selection";
 import { useGetNotebooks, useGetTags } from "@/db/data";
 import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
@@ -15,7 +14,6 @@ export function Sidebar({ className }: SidebarProps) {
   const { data: notebooksData, isLoading: isNotebooksDataLoading } =
     useGetNotebooks();
   const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();
-  const { selection, setSelection } = useSelectionStore();
   return (
     <div
       className={cn(

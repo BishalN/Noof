@@ -1,13 +1,13 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import {
   RelationalIndexDBContext,
   useCreateNote,
+  useGetNotebook,
   useGetNotes,
 } from "@/db/data";
 import { cn } from "@/lib/utils";
-import { useSelectionStore } from "@/store/selection";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
 import { useContext, useMemo, useState } from "react";
@@ -15,28 +15,21 @@ import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-// TODO: use the params to determine which notebook is selected
-// so that means we need to change our structure a little as
-// /notebook/[notebookId]/note/[noteId]
-// /tag/[tagsId]/note/[noteId]
-
-// current navigation structure:
-// /note/[noteId]
 export function SubSidebar({ className }: SubSidebarProps) {
   const { reldb } = useContext(RelationalIndexDBContext);
+  const router = useRouter();
 
-  const { notebookId, noteId, tagsId } = useParams();
-
-  const { selection, setSelection } = useSelectionStore();
+  const { notebookId, tagsId } = useParams();
 
   const { data: notesData, isLoading: isNotesDataLoading } = useGetNotes();
+  const { data: notebooksData } = useGetNotebook(notebookId);
+
+  console.log("notebookData", notebooksData);
 
   const { mutateAsync: createNote, isLoading: isCreateLoading } =
     useCreateNote();
 
   const [clearLoading, setClearLoading] = useState(false);
-
-  const router = useRouter();
 
   const notes = useMemo(() => {
     // for path /tag/[tagsId]/note/[noteId]
@@ -69,10 +62,8 @@ export function SubSidebar({ className }: SubSidebarProps) {
         }`,
       type: "note",
       tags: [tagsId ? tagsId : ""],
-      notebook: selection?.id,
+      notebook: notebookId,
     });
-    // update the selectionStore to add new note to the list
-    setSelection({ ...selection, notes: [...selection.notes, newNote.id] });
 
     // push the new note id to the url
     // handle the case where we are in the tagsId path
@@ -87,6 +78,8 @@ export function SubSidebar({ className }: SubSidebarProps) {
     setClearLoading(true);
     await reldb.destroy();
     setClearLoading(false);
+    // reload router
+    router.refresh();
   };
 
   return (
@@ -99,7 +92,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
       <div className="h-full w-full space-y-3 py-4">
         <div className="px-3 flex items-center justify-between">
           <h2 className="px-4 text-center font-semibold tracking-tight">
-            {selection?.name}
+            {notebooksData?.notebook?.name}
           </h2>
           <Button onClick={handleCreateNote} variant="ghost" size="icon">
             <CopyPlus className="h-5 w-5 text-gray-600" />

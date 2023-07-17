@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/context-menu";
 import { Notebook } from "@/db/data";
 import { cn } from "@/lib/utils";
-import { useSelectionStore } from "@/store/selection";
 import { RenameNotebook } from "./rename-notebook-dialog";
 import { useState } from "react";
 import { DeleteNotebookAlertDialog } from "./delete-notebook-alert-dialog";
@@ -19,11 +18,12 @@ interface NotebookItemWithContextMenuProps {
 export function NotebookItemWithContextMenu({
   notebook,
 }: NotebookItemWithContextMenuProps) {
-  const { selection, setSelection } = useSelectionStore();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const router = useRouter();
+
+  const { notebookId } = useParams();
 
   return (
     <>
@@ -44,15 +44,11 @@ export function NotebookItemWithContextMenu({
           <p
             key={notebook.id}
             onClick={() => {
-              setSelection({
-                ...notebook,
-                id: notebook.id as string,
-              });
               router.push(`/notebook/${notebook.id}`);
             }}
             className={cn(
               "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
-              selection?.id === notebook.id && "bg-slate-300"
+              notebookId === notebook.id && "bg-slate-300"
             )}
           >
             <span>{notebook.name}</span>
