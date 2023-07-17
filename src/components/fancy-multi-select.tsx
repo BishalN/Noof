@@ -68,6 +68,8 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
 
     console.log(`note is`, JSON.stringify(note, null, 2));
 
+    if (!note?.id) return;
+
     const tagRes = await createTag({
       name: inputRef?.current?.value!,
       type: "tag",
@@ -146,7 +148,7 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
   return (
     <Command
       onKeyDown={handleKeyDown}
-      className="border-none max-w-xl overflow-visible bg-transparent"
+      className="mt-2 border-none max-w-xl overflow-visible bg-transparent"
     >
       <div className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
         <div className="flex gap-1 flex-wrap">

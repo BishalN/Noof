@@ -185,7 +185,7 @@ export function Editor() {
           placeholder="Untitled"
           className="w-full text-2xl font-bold text-stone-500 bg-transparent border-none outline-none"
         />
-        <div className="flex space-x-1 items-center">
+        <div className="flex space-x-2 items-center ">
           <NotebookSelectionMenu
             currentNotebookName={selectedNoteData?.notebook?.name!}
             note={selectedNoteData?.note!}
