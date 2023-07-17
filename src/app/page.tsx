@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, viewport-fit=cover",
   manifest: "/manifest.json",
   icons: [
-    { rel: "apple-touch-icon", url: "/icons/apple-touch-icon.png" },
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
     { rel: "shortcut icon", url: "/favicon.ico" },
   ],
   keywords: ["nextjs", "pwa", "next-pwa"],
