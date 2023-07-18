@@ -16,7 +16,6 @@ import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
-  const { reldb } = useContext(RelationalIndexDBContext);
   const router = useRouter();
 
   const { notebookId, tagsId } = useParams();
@@ -28,8 +27,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
   const { mutateAsync: createNote, isLoading: isCreateLoading } =
     useCreateNote();
-
-  const [clearLoading, setClearLoading] = useState(false);
 
   const notes = useMemo(() => {
     // for path /tag/[tagsId]/note/[noteId]
@@ -75,14 +72,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
     router.push(`/notebook/${notebookId}/note/${newNote.id}`);
   };
 
-  const handleClearDatabase = async () => {
-    setClearLoading(true);
-    await reldb.destroy();
-    setClearLoading(false);
-    // reload router
-    router.refresh();
-  };
-
   return (
     <div
       className={cn(
@@ -105,21 +94,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
             return <NoteCardWithContextMenu key={note.id} note={note} />;
           })}
         </div>
-
-        <button
-          onClick={handleClearDatabase}
-          className="my-4 bg-slate-400 rounded-sm p-2 text-white"
-          disabled={clearLoading}
-        >
-          {clearLoading ? (
-            <div>
-              <span>Clearing Database</span>
-              <div className="animate-spin">🔄</div>
-            </div>
-          ) : (
-            "Reset Database"
-          )}
-        </button>
       </div>
     </div>
   );

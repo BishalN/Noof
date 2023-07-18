@@ -7,6 +7,7 @@ import { useGetNotebooks, useGetTags } from "@/db/data";
 import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 import { TagItemWithContextMenu } from "./tag-item-with-context-menu";
+import { SettingsDialog } from "./settings-dialog";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -69,7 +70,8 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
       <div className="px-7">
-        <h1>Bishal Neupane</h1>
+        <SettingsDialog />
+        {/* <h1>Bishal Neupane</h1> */}
       </div>
     </div>
   );
