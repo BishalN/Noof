@@ -90,8 +90,12 @@ db.setSchema([
 ## Tasks to do
 
 - redirect the user to notes page if there are notes available
+  remember the users last location and redirect them there
+  how can I do that ? -> done using unload event, would be better to not so prompt
 
-- Proper onboarding flow for user -> may create some template notebooks, note and tags
+- issue creating note on tags page causes issue
+
+- Proper onboarding flow for user -> may be create some template notebooks, note and tags
   if the user is opening app for the first time and redirect them there
 
 - Mobile ui for sidebar

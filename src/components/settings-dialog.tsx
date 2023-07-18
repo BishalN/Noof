@@ -25,8 +25,10 @@ export function SettingsDialog() {
     setClearLoading(true);
     try {
       await reldb.destroy();
+      // TODO: get the database to the initial reset templated state
       router.push("/");
       // TODO: there must be a nextjs thing that does this
+      await new Promise((resolve) => setTimeout(() => {}, 500));
       location.reload();
     } catch (error) {
     } finally {

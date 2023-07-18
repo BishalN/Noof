@@ -1,7 +1,9 @@
 import { Sidebar } from "@/components/sidebar";
 import { SubSidebar } from "@/components/sub-sidebar";
 import { Editor } from "@/components/ui/editor";
+import { useRouter } from "next/navigation";
 import { Metadata } from "next/types";
+import { useEffect } from "react";
 
 const APP_NAME = "Noof App";
 const APP_DESCRIPTION = "Notion but offline simple note taking app";

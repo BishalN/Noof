@@ -23,7 +23,14 @@ export function Editor() {
   const { mutateAsync: updateNote, isLoading: isUpdateNoteLoading } =
     useUpdateNote();
 
+  console.log(`selectedNoteData`, JSON.stringify(selectedNoteData, null, 2));
+
+  // is there some way to update the title as selectNoteData changes?
   const [title, setTitle] = useState(selectedNoteData?.note?.name);
+
+  useEffect(() => {
+    setTitle(selectedNoteData?.note?.name);
+  }, [selectedNoteData]);
 
   const debouncedTitleUpdates = useDebouncedCallback(async () => {
     await updateNote({

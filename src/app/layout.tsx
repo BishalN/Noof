@@ -2,8 +2,7 @@ import "@/styles/tailwind.css";
 import "@/styles/prosemirror.css";
 import "@/utils/polyfil";
 
-import { Metadata } from "next";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Providers from "./providers";
 
 const title = "Noof -  A offline first, Notion like Note taking app";
