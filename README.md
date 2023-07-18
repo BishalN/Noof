@@ -89,14 +89,14 @@ db.setSchema([
 
 ## Tasks to do
 
-- use proper layout system for whole app rather than having everything in page file
-  Doing this does not refereshes the editor
+- redirect the user to notes page if there are notes available
 
-- Proper onboarding flow for user
+- Proper onboarding flow for user -> may create some template notebooks, note and tags
+  if the user is opening app for the first time and redirect them there
 
 - Mobile ui for sidebar
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
 
-- redirect the user to notes page if there are notes available
-
 - handle the subsidebar if no notebook is selected
+
+- the editor title is still sometimes untitled
