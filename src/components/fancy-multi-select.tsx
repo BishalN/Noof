@@ -20,6 +20,7 @@ interface FancyMultiSelectProps {
 }
 
 export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
+  console.log("FancyMultiSelect note: ", JSON.stringify(note, null, 2));
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");
@@ -60,13 +61,9 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
   };
 
   const handleCreateAndAddTagToNote = async () => {
-    console.log("create and add tag to note");
     if (inputRef?.current?.value.trim() === "") {
-      console.log("input value is empty");
       return;
     }
-
-    console.log(`note is`, JSON.stringify(note, null, 2));
 
     if (!note?.id) return;
 
@@ -76,16 +73,26 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
       notes: [note?.id as string],
     });
 
-    // TODO: fix document update conflict here
-    // await updateNote({
-    //   name: note.name,
-    //   content: note.content,
-    //   id: note.id,
-    //   notebook: note.notebook,
-    //   tags: [...note?.tags, tagRes.id],
-    //   rev: note.rev,
-    //   type: "note",
-    // });
+    const createdTag: Tag = {
+      id: tagRes.id,
+      name: inputRef?.current?.value!,
+      notes: [note?.id as string],
+      type: "tag",
+      rev: tagRes.rev,
+    };
+
+    await updateNote({
+      name: note.name,
+      content: note.content,
+      id: note.id,
+      notebook: note.notebook,
+      tags: [...note?.tags, tagRes.id],
+      rev: note.rev,
+      type: "note",
+    });
+
+    setSelected((prev) => [...prev, createdTag]);
+
     setInputValue("");
   };
 
@@ -112,32 +119,32 @@ export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
     setSelected((prev) => prev.filter((s) => s.id !== tag.id));
   };
 
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
-      if (input) {
-        if (e.key === "Delete" || e.key === "Backspace") {
-          if (input.value === "") {
-            // Update this from here as well
-            setSelected((prev) => {
-              const newSelected = [...prev];
-              newSelected.pop();
-              return newSelected;
-            });
-          }
-        }
-        // This is not a default behaviour of the <input /> field
-        if (e.key === "Escape") {
-          input.blur();
-        }
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const input = inputRef.current;
+    if (input) {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        if (input.value === "") {
+          // Update this from here as well
+          // setSelected((prev) => {
+          //   const newSelected = [...prev];
+          //   newSelected.pop();
+          //   return newSelected;
+          // });
 
-        if (e.key === "Enter") {
-          handleCreateAndAddTagToNote();
+          handleUnselect(selected[selected.length - 1]);
         }
       }
-    },
-    []
-  );
+      // This is not a default behaviour of the <input /> field
+      if (e.key === "Escape") {
+        input.blur();
+      }
+
+      if (e.key === "Enter") {
+        // TODO: DO I need to await this?
+        handleCreateAndAddTagToNote();
+      }
+    }
+  };
 
   const selectables = React.useMemo(() => {
     return tagsSuggestions.filter((tag) => {

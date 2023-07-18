@@ -94,7 +94,6 @@ db.setSchema([
 - add loading components to all place
 
 - add time and excerpt to note data type
-- fancy-select modal is getting undefined note data fix that from ui/editor
 
 - Proper onboarding flow for user
 - Smooth Transition from one note to other or even one notebook to other or tags
