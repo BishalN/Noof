@@ -20,7 +20,6 @@ interface FancyMultiSelectProps {
 }
 
 export function FancyMultiSelect({ note }: FancyMultiSelectProps) {
-  console.log("FancyMultiSelect note: ", JSON.stringify(note, null, 2));
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState("");

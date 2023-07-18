@@ -13,15 +13,15 @@ import { useGetNoteByParams, useUpdateNote } from "@/db/data";
 import { NotebookSelectionMenu } from "@/components/notebook-selection-menu";
 import { useParams } from "next/navigation";
 import { FancyMultiSelect } from "@/components/fancy-multi-select";
+import LoadingCircle from "../icons/loading-circle";
 
 // TODO: first time application open may be create some template notes for the user
 // Instead of blank screen
 export function Editor() {
-  const {
-    data: selectedNoteData,
-    isLoading: isSelectedNoteLoading,
-    error,
-  } = useGetNoteByParams();
+  const { noteId } = useParams();
+
+  const { data: selectedNoteData, isLoading: isSelectedNoteLoading } =
+    useGetNoteByParams();
 
   const { mutateAsync: updateNote, isLoading: isUpdateNoteLoading } =
     useUpdateNote();
@@ -29,8 +29,6 @@ export function Editor() {
   const [title, setTitle] = useState(
     selectedNoteData?.note?.name ?? "Untitled"
   );
-
-  const { noteId } = useParams();
 
   const debouncedTitleUpdates = useDebouncedCallback(async () => {
     await updateNote({
@@ -173,6 +171,10 @@ export function Editor() {
   if (!noteId) {
     // TODO: make a proper empty state for this
     return <div>Please select or create a new note to start editing</div>;
+  }
+
+  if (isSelectedNoteLoading) {
+    return <LoadingCircle />;
   }
 
   return (

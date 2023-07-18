@@ -10,6 +10,7 @@ import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 import { TagItemWithContextMenu } from "./tag-item-with-context-menu";
 import { SettingsDialog } from "./settings-dialog";
 import { Button } from "./ui/button";
+import { SidebarSkeleton } from "./sidebar-skeleton";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -17,6 +18,10 @@ export function Sidebar({ className }: SidebarProps) {
   const { data: notebooksData, isLoading: isNotebooksDataLoading } =
     useGetNotebooks();
   const { data: tagsData, isLoading: isTagsDataLoading } = useGetTags();
+
+  if (isNotebooksDataLoading || isTagsDataLoading) {
+    return <SidebarSkeleton />;
+  }
   return (
     <div
       className={cn(
@@ -26,7 +31,7 @@ export function Sidebar({ className }: SidebarProps) {
     >
       <div className="h-full w-full space-y-3 py-4">
         <div className="px-3">
-          <h2 className="mb-2 px-4  font-semibold tracking-tight flex justify-between">
+          <h2 className="mb-2 px-4 font-semibold tracking-tight flex justify-between">
             <div className="flex items-center">
               <ScrollTextIcon className="mr-2 h-4 w-4" />
               <span>All Notes</span>

@@ -198,6 +198,7 @@ export const useGetNotes = () => {
     queryKey: ["notes"],
     queryFn: async () => {
       const res = await reldb.rel.find("note");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return res;
     },
   });

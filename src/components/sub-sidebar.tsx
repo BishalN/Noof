@@ -6,27 +6,33 @@ import {
   useGetNotebook,
   useGetNotes,
   useGetTag,
+  useUpdateNotebook,
+  useUpdateTag,
 } from "@/db/data";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
 import { useMemo } from "react";
 import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
+import { SubSidebarSkeleton } from "./subsidebar-skeleton";
+import LoadingCircle from "./ui/icons/loading-circle";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SubSidebar({ className }: SubSidebarProps) {
   const router = useRouter();
-
   const { notebookId, tagsId } = useParams();
 
   const { data: notesData, isLoading: isNotesDataLoading } = useGetNotes();
-  const { data: notebooksData } = useGetNotebook(notebookId);
-  const { data: tagsData } = useGetTag(tagsId);
+  const { data: notebooksData, isLoading: isNotebookDataLoading } =
+    useGetNotebook(notebookId);
+  const { data: tagsData, isLoading: isTagsDataLoading } = useGetTag(tagsId);
 
-  console.log(`tagsData: `, JSON.stringify(tagsData, null, 2));
-
-  const { mutateAsync: createNote, isLoading: isCreateLoading } =
+  const { mutateAsync: updateNotebook, isLoading: isUpdateNotebookLoading } =
+    useUpdateNotebook();
+  const { mutateAsync: updateTag, isLoading: isUpdateTagLoading } =
+    useUpdateTag();
+  const { mutateAsync: createNote, isLoading: isCreateNoteLoading } =
     useCreateNote();
 
   const notes = useMemo(() => {
@@ -62,6 +68,25 @@ export function SubSidebar({ className }: SubSidebarProps) {
         }`,
     });
 
+    // update the notebooks side as well if not in tags page
+    if (tagsId) {
+      await updateTag({
+        name: tagsData?.tag?.name as string,
+        notes: [tagsData?.tag.notes, newNote.id],
+        type: "tag",
+        id: tagsData?.tag.id,
+        rev: tagsData?.tag.rev,
+      });
+    } else {
+      await updateNotebook({
+        name: notebooksData?.notebook.name as string,
+        notes: [...notebooksData?.notebook?.notes!, newNote.id],
+        type: "notebook",
+        id: notebooksData?.notebook.id,
+        rev: notebooksData?.notebook.rev,
+      });
+    }
+
     // push the new note id to the url
     // handle the case where we are in the tagsId path
     if (tagsId) {
@@ -70,6 +95,15 @@ export function SubSidebar({ className }: SubSidebarProps) {
     }
     router.push(`/notebook/${notebookId}/note/${newNote.id}`);
   };
+
+  const isTagsPage = tagsId ? true : false;
+  if (isTagsPage) {
+    if (isNotesDataLoading || isTagsDataLoading) {
+      return <SubSidebarSkeleton />;
+    }
+  } else if (isNotebookDataLoading || isNotesDataLoading || isTagsDataLoading) {
+    return <SubSidebarSkeleton />;
+  }
 
   return (
     <div
@@ -93,6 +127,12 @@ export function SubSidebar({ className }: SubSidebarProps) {
             return <NoteCardWithContextMenu key={note.id} note={note} />;
           })}
         </div>
+
+        {isUpdateNotebookLoading ||
+        isUpdateTagLoading ||
+        isCreateNoteLoading ? (
+          <LoadingCircle />
+        ) : null}
       </div>
     </div>
   );
