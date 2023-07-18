@@ -96,13 +96,16 @@ export function SubSidebar({ className }: SubSidebarProps) {
     router.push(`/notebook/${notebookId}/note/${newNote.id}`);
   };
 
-  const isTagsPage = tagsId ? true : false;
-  if (isTagsPage) {
+  if (tagsId) {
     if (isNotesDataLoading || isTagsDataLoading) {
       return <SubSidebarSkeleton />;
     }
-  } else if (isNotebookDataLoading || isNotesDataLoading || isTagsDataLoading) {
-    return <SubSidebarSkeleton />;
+  }
+
+  if (notebookId) {
+    if (isNotebookDataLoading || isNotesDataLoading || isTagsDataLoading) {
+      return <SubSidebarSkeleton />;
+    }
   }
 
   return (
@@ -115,7 +118,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
       <div className="h-full w-full space-y-3 py-4">
         <div className="px-3 flex items-center justify-between">
           <h2 className="px-4 text-center font-semibold tracking-tight">
-            {notebooksData?.notebook?.name || tagsData?.tag.name}
+            {notebooksData?.notebook?.name || tagsData?.tag?.name}
           </h2>
           <Button onClick={handleCreateNote} variant="ghost" size="icon">
             <CopyPlus className="h-5 w-5 text-gray-600" />

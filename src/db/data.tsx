@@ -215,7 +215,6 @@ export const useGetNote = (id: string) => {
     queryKey: ["note", id],
     queryFn: async () => {
       const res = await reldb.rel.find("note", id);
-      console.log(`UseGetNote Query`, JSON.stringify(res, null, 2));
       return res;
     },
   });
