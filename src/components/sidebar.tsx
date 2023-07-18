@@ -1,6 +1,7 @@
 "use client";
 
-import { ScrollTextIcon, BookIcon, TagsIcon } from "lucide-react";
+import { ScrollTextIcon, BookIcon, TagsIcon, SendIcon } from "lucide-react";
+import NextLink from "next/link";
 
 import { cn } from "@/lib/utils";
 import { useGetNotebooks, useGetTags } from "@/db/data";
@@ -8,6 +9,7 @@ import { CreateNotebookDialog } from "./create-notebook-dialog";
 import { NotebookItemWithContextMenu } from "./notebook-item-with-context-menu";
 import { TagItemWithContextMenu } from "./tag-item-with-context-menu";
 import { SettingsDialog } from "./settings-dialog";
+import { Button } from "./ui/button";
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -69,9 +71,18 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
         </div>
       </div>
-      <div className="px-7">
+      <div className="px-7 space-x-2">
         <SettingsDialog />
-        {/* <h1>Bishal Neupane</h1> */}
+        <Button className="text-xs" variant="secondary">
+          <NextLink
+            href="https://github.com/BishalN/Noof/issues/new"
+            target="_blank"
+            className="flex space-x-1"
+          >
+            <SendIcon className="h-4 w-4 mr-2" />
+            <span>Feedbacks</span>
+          </NextLink>
+        </Button>
       </div>
     </div>
   );

@@ -94,14 +94,8 @@ db.setSchema([
 
 - add loading components to all place
 - Proper onboarding flow for user
-- still don't see the title in tag route
 
-- Add a feedback button in bottom right corner to github issue
 - Mobile ui for sidebar
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
 
-- there is a loading state so take care of it in production it seems to be serious issue there
-
 - redirect the user to notes page if there are notes available
-
-- remove the reset button from subsidebar and keep it in settings somewhere as a modal
