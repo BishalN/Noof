@@ -332,11 +332,14 @@ export const useGetNoteByParams = () => {
 
   const { noteId } = useParams();
 
+  console.log("noteId", noteId);
+
   return useQuery<null, Error, GetNoteResponse>({
     //@ts-ignore
     queryKey: ["note", noteId],
     queryFn: async () => {
       const res = await reldb.rel.find("note", noteId);
+      console.log("res", JSON.stringify(res, null, 2));
       // TODO: find a better way to do this
       let content = res.notes[0].content;
       try {
@@ -349,7 +352,8 @@ export const useGetNoteByParams = () => {
           ...res.notes[0],
           content,
         },
-        notebook: res.notebooks[0],
+        // TODO: fix this is not available for tags page but we need it
+        notebook: res?.notebooks ? res.notebooks[0] : null,
       };
       return data;
     },

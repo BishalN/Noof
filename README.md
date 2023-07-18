@@ -93,10 +93,10 @@ db.setSchema([
   remember the users last location and redirect them there
   how can I do that ? -> done using unload event, would be better to not so prompt
 
-- issue creating note on tags page causes issue
-
 - Proper onboarding flow for user -> may be create some template notebooks, note and tags
   if the user is opening app for the first time and redirect them there
+
+- display tags badge fix this
 
 - Mobile ui for sidebar
 - Add a search bar in sidebar just like notion search with note, tags, notebooks

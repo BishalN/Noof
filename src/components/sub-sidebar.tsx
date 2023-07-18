@@ -70,9 +70,11 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
     // update the notebooks side as well if not in tags page
     if (tagsId) {
+      // TODO: fix there is issue here
+      console.log(`create note in tag`, JSON.stringify(tagsData, null, 2));
       await updateTag({
         name: tagsData?.tag?.name as string,
-        notes: [tagsData?.tag.notes, newNote.id],
+        notes: [...tagsData?.tag?.notes!, newNote.id],
         type: "tag",
         id: tagsData?.tag.id,
         rev: tagsData?.tag.rev,
