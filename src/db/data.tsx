@@ -287,10 +287,14 @@ export const useGetTag = (id: string) => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
   return useQuery<null, Error, GetTagResponse>({
+    //@ts-ignore
     queryKey: ["tag", id],
     queryFn: async () => {
       const res = await reldb.rel.find("tag", id);
-      return res;
+      const actualResp = {
+        tag: res?.tags[0],
+      };
+      return actualResp;
     },
   });
 };

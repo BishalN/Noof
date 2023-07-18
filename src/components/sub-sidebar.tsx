@@ -2,15 +2,15 @@
 import { useParams, useRouter } from "next/navigation";
 
 import {
-  RelationalIndexDBContext,
   useCreateNote,
   useGetNotebook,
   useGetNotes,
+  useGetTag,
 } from "@/db/data";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { CopyPlus } from "lucide-react";
-import { useContext, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { NoteCardWithContextMenu } from "./note-card-with-context-menu";
 
 interface SubSidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -22,8 +22,9 @@ export function SubSidebar({ className }: SubSidebarProps) {
 
   const { data: notesData, isLoading: isNotesDataLoading } = useGetNotes();
   const { data: notebooksData } = useGetNotebook(notebookId);
+  const { data: tagsData } = useGetTag(tagsId);
 
-  console.log("notebookData", notebooksData);
+  console.log(`tagsData: `, JSON.stringify(tagsData, null, 2));
 
   const { mutateAsync: createNote, isLoading: isCreateLoading } =
     useCreateNote();
@@ -37,8 +38,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
     // for path /notebook/[notebookId]/note/[noteId]
     return notesData?.notes.filter((note) => note.notebook === notebookId);
   }, [notebookId, notesData, tagsId]);
-
-  if (isNotesDataLoading) return <div>Loading...</div>;
 
   const handleCreateNote = async () => {
     const newNote = await createNote({
@@ -82,7 +81,7 @@ export function SubSidebar({ className }: SubSidebarProps) {
       <div className="h-full w-full space-y-3 py-4">
         <div className="px-3 flex items-center justify-between">
           <h2 className="px-4 text-center font-semibold tracking-tight">
-            {notebooksData?.notebook?.name}
+            {notebooksData?.notebook?.name || tagsData?.tag.name}
           </h2>
           <Button onClick={handleCreateNote} variant="ghost" size="icon">
             <CopyPlus className="h-5 w-5 text-gray-600" />
@@ -98,5 +97,3 @@ export function SubSidebar({ className }: SubSidebarProps) {
     </div>
   );
 }
-
-// TODO: add a new field to notes as excerpt content
