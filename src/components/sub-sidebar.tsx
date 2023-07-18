@@ -46,6 +46,10 @@ export function SubSidebar({ className }: SubSidebarProps) {
   const handleCreateNote = async () => {
     const newNote = await createNote({
       name: "Untitled",
+      type: "note",
+      tags: [tagsId ? tagsId : ""],
+      notebook: notebookId,
+      date: new Date().toISOString(),
       content: `{
           "type": "doc",
           "content": [
@@ -60,9 +64,6 @@ export function SubSidebar({ className }: SubSidebarProps) {
             }
           ]
         }`,
-      type: "note",
-      tags: [tagsId ? tagsId : ""],
-      notebook: notebookId,
     });
 
     // push the new note id to the url

@@ -91,12 +91,9 @@ db.setSchema([
 
 - use proper layout system for whole app rather than having everything in page file
   Doing this does not refereshes the editor
+
 - add loading components to all place
-
-- add time and excerpt to note data type
-
 - Proper onboarding flow for user
-- Smooth Transition from one note to other or even one notebook to other or tags
 
 - Add a feedback button in bottom right corner to github issue
 - Mobile ui for sidebar

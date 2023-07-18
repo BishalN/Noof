@@ -59,6 +59,7 @@ export type Note = {
   rev?: string;
   name: string;
   excerpt?: string;
+  date?: string;
   content: any;
   type: "note";
   notebook: string;
