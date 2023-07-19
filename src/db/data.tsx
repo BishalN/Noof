@@ -357,3 +357,49 @@ export const useGetNoteByParams = () => {
     enabled: !!noteId,
   });
 };
+
+export const handleOnboarding = async (reldb: PouchDB.RelDatabase<{}>) => {
+  const onBoardingNotebook: Notebook = {
+    name: "Recipe",
+    notes: [],
+    type: "notebook",
+  };
+  const createNotebookResponse = await reldb.rel.save(
+    "notebook",
+    onBoardingNotebook
+  );
+
+  const onBoardingNote: Note = {
+    name: "How to make a sandwich",
+    notebook: createNotebookResponse.id,
+    tags: [],
+    type: "note",
+    date: new Date().toISOString(),
+    content: `# How to make a sandwich`,
+  };
+
+  const createNoteResponse = await reldb.rel.save("note", onBoardingNote);
+
+  const onBoardingTag: Tag = {
+    name: "Tutorial",
+    notes: [createNoteResponse.id],
+    type: "tag",
+  };
+
+  const createTagResponse = await reldb.rel.save("tag", onBoardingTag);
+
+  // update the notebook with notes and note with tags array
+  await reldb.rel.save("notebook", {
+    ...onBoardingNotebook,
+    id: createNotebookResponse.id,
+    rev: createNotebookResponse.rev,
+    notes: [createNoteResponse.id],
+  });
+
+  await reldb.rel.save("note", {
+    ...onBoardingNote,
+    id: createNoteResponse.id,
+    rev: createNoteResponse.rev,
+    tags: [createTagResponse.id],
+  });
+};

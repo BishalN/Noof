@@ -52,6 +52,7 @@
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
+    "cookies-next": "^2.1.2",
     "dayjs": "^1.11.9",
     "encoding": "^0.1.13",
     "eslint": "8.44.0",

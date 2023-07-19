@@ -3,6 +3,7 @@
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -22,8 +23,11 @@ import {
   Notebook,
   RelationalIndexDBContext,
   Tag,
+  handleOnboarding,
   useGetNotebooks,
 } from "@/db/data";
+
+import { setCookie, getCookie, hasCookie } from "cookies-next";
 
 const DBProvider = dynamic(() => import("@/db/data"), { ssr: false });
 
@@ -92,70 +96,16 @@ export default function Providers({ children }: { children: ReactNode }) {
 }
 
 const OnBoardingSetup = () => {
-  const { data: notebooksData, isLoading: isGetNotebooksLoading } =
-    useGetNotebooks();
+  // check if user has a cookie for onboarding
+  // if not, perform handleOnboarding function and set cookie
+  // if yes, do nothing
   const { reldb } = useContext(RelationalIndexDBContext);
-  const [lastLocation, setLastLocation] = useState<string | null>(null);
-  useEffect(() => {
-    setLastLocation(localStorage.getItem("lastLocation") ?? null);
-  }, []);
-
-  const [isHandleOnboardingLoading, setHandleOnboardingLoading] =
-    useState(false);
-
-  const handleOnboarding = async () => {
-    setHandleOnboardingLoading(true);
-    const onBoardingNotebook: Notebook = {
-      name: "Recipe",
-      notes: [],
-      type: "notebook",
-    };
-    const createNotebookResponse = await reldb.rel.save(
-      "notebook",
-      onBoardingNotebook
-    );
-
-    const onBoardingNote: Note = {
-      name: "How to make a sandwich",
-      notebook: createNotebookResponse.id,
-      tags: [],
-      type: "note",
-      date: new Date().toISOString(),
-      content: `# How to make a sandwich`,
-    };
-
-    const createNoteResponse = await reldb.rel.save("note", onBoardingNote);
-
-    const onBoardingTag: Tag = {
-      name: "Tutorial",
-      notes: [createNoteResponse.id],
-      type: "tag",
-    };
-
-    const createTagResponse = await reldb.rel.save("tag", onBoardingTag);
-
-    // update the notebook with notes and note with tags array
-    await reldb.rel.save("notebook", {
-      ...onBoardingNotebook,
-      notes: [createNoteResponse.id],
+  console.log("Cookie", getCookie("onboarding"));
+  if (!hasCookie("onboarding")) {
+    handleOnboarding(reldb).then(() => {
+      setCookie("onboarding", "true");
     });
-
-    await reldb.rel.save("note", {
-      ...onBoardingNote,
-      tags: [createTagResponse.id],
-    });
-
-    setHandleOnboardingLoading(false);
-  };
-
-  if (
-    !isGetNotebooksLoading &&
-    notebooksData?.notebooks.length === 0 &&
-    !lastLocation
-  ) {
-    handleOnboarding();
   }
 
-  // May be show a loading screen here
   return null;
 };
