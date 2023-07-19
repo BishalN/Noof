@@ -332,14 +332,11 @@ export const useGetNoteByParams = () => {
 
   const { noteId } = useParams();
 
-  console.log("noteId", noteId);
-
   return useQuery<null, Error, GetNoteResponse>({
     //@ts-ignore
     queryKey: ["note", noteId],
     queryFn: async () => {
       const res = await reldb.rel.find("note", noteId);
-      console.log("res", JSON.stringify(res, null, 2));
       // TODO: find a better way to do this
       let content = res.notes[0].content;
       try {

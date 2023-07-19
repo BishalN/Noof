@@ -89,12 +89,10 @@ db.setSchema([
 
 ## Tasks to do
 
-- redirect the user to notes page if there are notes available
-  remember the users last location and redirect them there
-  how can I do that ? -> done using unload event, would be better to not so prompt
-
 - Proper onboarding flow for user -> may be create some template notebooks, note and tags
   if the user is opening app for the first time and redirect them there
+
+- make pwa work without internet access
 
 - display tags badge fix this
 
@@ -102,5 +100,3 @@ db.setSchema([
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
 
 - handle the subsidebar if no notebook is selected
-
-- the editor title is still sometimes untitled
