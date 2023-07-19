@@ -53,6 +53,7 @@ export function Editor() {
 
   const debouncedUpdates = useDebouncedCallback(async ({ editor }) => {
     const json = editor.getJSON();
+    console.log(JSON.stringify(json, null, 2));
     setSaveStatus("Saving...");
     // setContent(json);
     await updateNote({

@@ -96,16 +96,16 @@ export default function Providers({ children }: { children: ReactNode }) {
 }
 
 const OnBoardingSetup = () => {
-  // check if user has a cookie for onboarding
-  // if not, perform handleOnboarding function and set cookie
-  // if yes, do nothing
   const { reldb } = useContext(RelationalIndexDBContext);
-  console.log("Cookie", getCookie("onboarding"));
-  if (!hasCookie("onboarding")) {
-    handleOnboarding(reldb).then(() => {
-      setCookie("onboarding", "true");
-    });
-  }
+  const router = useRouter();
+  useEffect(() => {
+    if (!hasCookie("onboarding")) {
+      handleOnboarding(reldb).then((data) => {
+        router.push(`/notebook/${data.notebook.id}/note/${data.note.id}`);
+        setCookie("onboarding", "true");
+      });
+    }
+  }, []);
 
   return null;
 };

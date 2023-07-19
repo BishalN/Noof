@@ -89,9 +89,6 @@ db.setSchema([
 
 ## Tasks to do
 
-- Proper onboarding flow for user -> may be create some template notebooks, note and tags
-  if the user is opening app for the first time and redirect them there
-
 - make pwa work without internet access
 
 - display tags badge fix this

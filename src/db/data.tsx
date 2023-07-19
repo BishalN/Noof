@@ -1,4 +1,4 @@
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { queryClient } from "@/app/providers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import PouchDB from "pouchdb-browser";
@@ -9,6 +9,7 @@ import rel from "relational-pouch";
 import indexDBAdapter from "pouchdb-adapter-indexeddb";
 
 import React, { ReactNode, useContext } from "react";
+import { initialNote } from "./initialNote";
 
 PouchDB.plugin(indexDBAdapter).plugin(find).plugin(rel);
 
@@ -360,7 +361,7 @@ export const useGetNoteByParams = () => {
 
 export const handleOnboarding = async (reldb: PouchDB.RelDatabase<{}>) => {
   const onBoardingNotebook: Notebook = {
-    name: "Recipe",
+    name: "Using Noof",
     notes: [],
     type: "notebook",
   };
@@ -370,12 +371,12 @@ export const handleOnboarding = async (reldb: PouchDB.RelDatabase<{}>) => {
   );
 
   const onBoardingNote: Note = {
-    name: "How to make a sandwich",
+    name: "How to use Noof",
     notebook: createNotebookResponse.id,
     tags: [],
     type: "note",
     date: new Date().toISOString(),
-    content: `# How to make a sandwich`,
+    content: initialNote,
   };
 
   const createNoteResponse = await reldb.rel.save("note", onBoardingNote);
@@ -402,4 +403,10 @@ export const handleOnboarding = async (reldb: PouchDB.RelDatabase<{}>) => {
     rev: createNoteResponse.rev,
     tags: [createTagResponse.id],
   });
+
+  return {
+    notebook: createNotebookResponse,
+    note: createNoteResponse,
+    tag: createTagResponse,
+  };
 };
