@@ -1,3 +1,5 @@
+"use client";
+
 import { Sidebar } from "@/components/sidebar";
 import { SubSidebar } from "@/components/sub-sidebar";
 import { Editor } from "@/components/ui/editor";

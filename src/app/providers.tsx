@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  ReactNode,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useContext, useEffect } from "react";
 import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import clsx from "clsx";
@@ -18,16 +10,9 @@ import { displayFontMapper, defaultFontMapper } from "@/styles/fonts";
 import useLocalStorage from "@/lib/hooks/use-local-storage";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import {
-  Note,
-  Notebook,
-  RelationalIndexDBContext,
-  Tag,
-  handleOnboarding,
-  useGetNotebooks,
-} from "@/db/data";
+import { RelationalIndexDBContext, handleOnboarding } from "@/db/data";
 
-import { setCookie, getCookie, hasCookie } from "cookies-next";
+import { setCookie, hasCookie } from "cookies-next";
 
 const DBProvider = dynamic(() => import("@/db/data"), { ssr: false });
 
@@ -90,7 +75,6 @@ export default function Providers({ children }: { children: ReactNode }) {
           </main>
         </QueryClientProvider>
       </DBProvider>
-      <Analytics />
     </AppContext.Provider>
   );
 }
