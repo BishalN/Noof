@@ -26,7 +26,6 @@ import {
 } from "lucide-react";
 import LoadingCircle from "@/components/ui/icons/loading-circle";
 import { toast } from "sonner";
-import va from "@vercel/analytics";
 import Magic from "@/components/ui/icons/magic";
 import { handleImageUpload } from "@/lib/editor";
 
@@ -73,21 +72,21 @@ const Command = Extension.create({
 
 const getSuggestionItems = ({ query }: { query: string }) => {
   return [
-    {
-      title: "Continue writing",
-      description: "Use AI to expand your thoughts.",
-      searchTerms: ["gpt"],
-      icon: <Magic className="w-7 text-black" />,
-    },
-    {
-      title: "Send Feedback",
-      description: "Let us know how we can improve.",
-      icon: <MessageSquarePlus size={18} />,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).run();
-        window.open("/feedback", "_blank");
-      },
-    },
+    // {
+    //   title: "Continue writing",
+    //   description: "Use AI to expand your thoughts.",
+    //   searchTerms: ["gpt"],
+    //   icon: <Magic className="w-7 text-black" />,
+    // },
+    // {
+    //   title: "Send Feedback",
+    //   description: "Let us know how we can improve.",
+    //   icon: <MessageSquarePlus size={18} />,
+    //   command: ({ editor, range }: CommandProps) => {
+    //     editor.chain().focus().deleteRange(range).run();
+    //     window.open("/feedback", "_blank");
+    //   },
+    // },
     {
       title: "Text",
       description: "Just start typing with plain text.",
@@ -193,26 +192,26 @@ const getSuggestionItems = ({ query }: { query: string }) => {
       command: ({ editor, range }: CommandProps) =>
         editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
     },
-    {
-      title: "Image",
-      description: "Upload an image from your computer.",
-      searchTerms: ["photo", "picture", "media"],
-      icon: <ImageIcon size={18} />,
-      command: ({ editor, range }: CommandProps) => {
-        editor.chain().focus().deleteRange(range).run();
-        // upload image
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.onchange = async (event) => {
-          if (input.files?.length) {
-            const file = input.files[0];
-            return handleImageUpload(file, editor.view, event);
-          }
-        };
-        input.click();
-      },
-    },
+    // {
+    //   title: "Image",
+    //   description: "Upload an image from your computer.",
+    //   searchTerms: ["photo", "picture", "media"],
+    //   icon: <ImageIcon size={18} />,
+    //   command: ({ editor, range }: CommandProps) => {
+    //     editor.chain().focus().deleteRange(range).run();
+    //     // upload image
+    //     const input = document.createElement("input");
+    //     input.type = "file";
+    //     input.accept = "image/*";
+    //     input.onchange = async (event) => {
+    //       if (input.files?.length) {
+    //         const file = input.files[0];
+    //         return handleImageUpload(file, editor.view, event);
+    //       }
+    //     };
+    //     input.click();
+    //   },
+    // },
   ].filter((item) => {
     if (typeof query === "string" && query.length > 0) {
       const search = query.toLowerCase();
@@ -260,7 +259,6 @@ const CommandList = ({
     onResponse: (response) => {
       if (response.status === 429) {
         toast.error("You have reached your request limit for the day.");
-        va.track("Rate Limit Reached");
         return;
       }
       editor.chain().focus().deleteRange(range).run();
@@ -280,9 +278,6 @@ const CommandList = ({
   const selectItem = useCallback(
     (index: number) => {
       const item = items[index];
-      va.track("Slash Command Used", {
-        command: item.title,
-      });
       if (item) {
         if (item.title === "Continue writing") {
           // we're using this for now until we can figure out a way to stream markdown text with proper formatting: https://github.com/steven-tey/novel/discussions/7

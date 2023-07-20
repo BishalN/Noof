@@ -55,7 +55,7 @@ export const DisplayTagsOnNoteCard = ({ tagIds }: DisplayTagsProps) => {
   }, [tagsData, tagIds]);
 
   return (
-    <div className="flex flex-wrap space-y-2 space-x-2">
+    <div className="flex flex-wrap space-x-2">
       {tags?.map((tag) => (
         <p key={tag.id} className="bg-pink-300 text-black px-2 rounded-full">
           {tag.name}

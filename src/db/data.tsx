@@ -1,6 +1,5 @@
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { queryClient } from "@/app/providers";
-import { useSelectionStore } from "@/store/selection";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import PouchDB from "pouchdb-browser";
 
@@ -10,6 +9,7 @@ import rel from "relational-pouch";
 import indexDBAdapter from "pouchdb-adapter-indexeddb";
 
 import React, { ReactNode, useContext } from "react";
+import { initialNote } from "./initialNote";
 
 PouchDB.plugin(indexDBAdapter).plugin(find).plugin(rel);
 
@@ -60,6 +60,7 @@ export type Note = {
   rev?: string;
   name: string;
   excerpt?: string;
+  date?: string;
   content: any;
   type: "note";
   notebook: string;
@@ -113,14 +114,19 @@ export const useGetNotebooks = () => {
 type GetNoteBookResponse = {
   notebook: Notebook;
 };
+
 export const useGetNotebook = (id: string) => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
   return useQuery<null, Error, GetNoteBookResponse>({
+    //@ts-ignore
     queryKey: ["notebook", id],
     queryFn: async () => {
       const res = await reldb.rel.find("notebook", id);
-      return res;
+      const actualResp = {
+        notebook: res.notebooks[0],
+      };
+      return actualResp;
     },
     enabled: !!id,
   });
@@ -161,11 +167,11 @@ export const useDeleteNotebook = () => {
 export const useCreateNote = () => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
-  const { selection } = useSelectionStore();
+  const path = usePathname();
   return useMutation({
     mutationFn: async (note: Note) => {
       const res = await reldb.rel.save("note", note);
-      // Associate it with the notebook of current selection
+      // TODO: Associate it with the notebook of current selection
       // console.log("selection", JSON.stringify(selection, null, 2));
       // await reldb.rel.save(selection.type, {
       //   ...selection,
@@ -174,9 +180,8 @@ export const useCreateNote = () => {
       return res;
     },
     onSuccess: ({ id }) => {
-      // TODO: invalidate only one notebook
       queryClient.invalidateQueries({
-        queryKey: [selection.type, id],
+        queryKey: [path.includes("tag") ? "tag" : "notebook", id],
       });
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["notebooks"] });
@@ -194,6 +199,7 @@ export const useGetNotes = () => {
     queryKey: ["notes"],
     queryFn: async () => {
       const res = await reldb.rel.find("note");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return res;
     },
   });
@@ -203,7 +209,6 @@ type GetNoteResponse = {
   note: Note;
   notebook: Notebook;
 };
-
 export const useGetNote = (id: string) => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
@@ -283,10 +288,14 @@ export const useGetTag = (id: string) => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
   return useQuery<null, Error, GetTagResponse>({
+    //@ts-ignore
     queryKey: ["tag", id],
     queryFn: async () => {
       const res = await reldb.rel.find("tag", id);
-      return res;
+      const actualResp = {
+        tag: res?.tags[0],
+      };
+      return actualResp;
     },
   });
 };
@@ -319,63 +328,6 @@ export const useDeleteTag = () => {
   });
 };
 
-export const useGetNotesBySelection = () => {
-  const { reldb } = useContext(RelationalIndexDBContext);
-
-  const { selection } = useSelectionStore();
-  return useQuery<null, Error, GetNotesResponse>({
-    queryKey: [selection.type, selection.id],
-    queryFn: async () => {
-      const res = await reldb.rel.find("note", selection.notes);
-
-      return res;
-    },
-    cacheTime: 0,
-  });
-};
-
-// I don't see data immediately after creating a note
-// I see it after window refocus / reload
-// I don't see notes when I change the notebook
-
-// Since the selection is stored in a local storage
-// Whenever selection changes the notes array is also gone has to start from scratch
-// For that reason the indexdb's notebooks should also have the ids of the notes
-
-// react query possible issues
-
-export const useGetNoteByQueryParam = () => {
-  const { reldb } = useContext(RelationalIndexDBContext);
-
-  // We're not getting noteId or something
-  const searchParams = useSearchParams();
-  const noteId = searchParams.get("noteId");
-
-  return useQuery<null, Error, GetNoteResponse>({
-    //@ts-ignore
-    queryKey: ["note", noteId],
-    queryFn: async () => {
-      const res = await reldb.rel.find("note", noteId);
-      // TODO: find a better way to do this
-      let content = res.notes[0].content;
-      try {
-        content = JSON.parse(content);
-      } catch (error) {
-        console.log(`JSON parse error for note ${noteId} failed with ${error}`);
-      }
-      const data = {
-        note: {
-          ...res.notes[0],
-          content,
-        },
-        notebook: res.notebooks[0],
-      };
-      return data;
-    },
-    enabled: !!noteId,
-  });
-};
-
 export const useGetNoteByParams = () => {
   const { reldb } = useContext(RelationalIndexDBContext);
 
@@ -398,10 +350,63 @@ export const useGetNoteByParams = () => {
           ...res.notes[0],
           content,
         },
-        notebook: res.notebooks[0],
+        // TODO: fix this is not available for tags page but we need it
+        notebook: res?.notebooks ? res.notebooks[0] : null,
       };
       return data;
     },
     enabled: !!noteId,
   });
+};
+
+export const handleOnboarding = async (reldb: PouchDB.RelDatabase<{}>) => {
+  const onBoardingNotebook: Notebook = {
+    name: "Using Noof",
+    notes: [],
+    type: "notebook",
+  };
+  const createNotebookResponse = await reldb.rel.save(
+    "notebook",
+    onBoardingNotebook
+  );
+
+  const onBoardingNote: Note = {
+    name: "How to use Noof",
+    notebook: createNotebookResponse.id,
+    tags: [],
+    type: "note",
+    date: new Date().toISOString(),
+    content: initialNote,
+  };
+
+  const createNoteResponse = await reldb.rel.save("note", onBoardingNote);
+
+  const onBoardingTag: Tag = {
+    name: "Tutorial",
+    notes: [createNoteResponse.id],
+    type: "tag",
+  };
+
+  const createTagResponse = await reldb.rel.save("tag", onBoardingTag);
+
+  // update the notebook with notes and note with tags array
+  await reldb.rel.save("notebook", {
+    ...onBoardingNotebook,
+    id: createNotebookResponse.id,
+    rev: createNotebookResponse.rev,
+    notes: [createNoteResponse.id],
+  });
+
+  await reldb.rel.save("note", {
+    ...onBoardingNote,
+    id: createNoteResponse.id,
+    rev: createNoteResponse.rev,
+    tags: [createTagResponse.id],
+  });
+
+  return {
+    notebook: createNotebookResponse,
+    note: createNoteResponse,
+    tag: createTagResponse,
+  };
 };

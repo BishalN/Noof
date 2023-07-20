@@ -2,13 +2,12 @@ import "@/styles/tailwind.css";
 import "@/styles/prosemirror.css";
 import "@/utils/polyfil";
 
-import { Metadata } from "next";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Providers from "./providers";
 
-const title = "Noof -  A offline first, Notion like Note taking app";
+const title = "Noof -  A Notion like Note taking app";
 const description =
-  "Noof is a offline first, Notion like Note taking app. It is built with Next.js, Tailwind CSS, ProseMirror, and Vercel.";
+  "Noof is a Notion like note taking app. It is a free and open source.";
 
 export const metadata = {
   title,
@@ -21,7 +20,7 @@ export const metadata = {
     title,
     description,
     card: "summary_large_image",
-    creator: "@steventey",
+    creator: "@bishaln",
   },
   metadataBase: new URL("https://noof.bishalneupane.com"),
   themeColor: "#ffffff",

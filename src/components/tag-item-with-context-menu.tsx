@@ -6,9 +6,8 @@ import {
 } from "@/components/ui/context-menu";
 import { Tag } from "@/db/data";
 import { cn } from "@/lib/utils";
-import { useSelectionStore } from "@/store/selection";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { RenameTag } from "./rename-tag-dialog";
 import { DeleteTagAlertDialog } from "./delete-tag-alert-dialog";
 
@@ -17,11 +16,11 @@ interface TagItemWithContextMenuProps {
 }
 
 export function TagItemWithContextMenu({ tag }: TagItemWithContextMenuProps) {
-  const { selection, setSelection } = useSelectionStore();
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const router = useRouter();
+  const { tagsId } = useParams();
 
   return (
     <>
@@ -42,15 +41,11 @@ export function TagItemWithContextMenu({ tag }: TagItemWithContextMenuProps) {
           <p
             key={tag.id}
             onClick={() => {
-              setSelection({
-                ...tag,
-                id: tag.id as string,
-              });
               router.push(`/tag/${tag.id}`);
             }}
             className={cn(
               "flex justify-between hover:bg-slate-300 rounded-md px-2 py-1 cursor-pointer",
-              selection?.id === tag.id && "bg-slate-300"
+              tagsId === tag.id && "bg-slate-300"
             )}
           >
             <span>{tag.name}</span>

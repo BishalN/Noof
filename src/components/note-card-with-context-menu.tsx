@@ -1,3 +1,7 @@
+"use client";
+
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -11,6 +15,8 @@ import { RenameNoteDialog } from "./rename-note-dialog";
 import { DeleteNoteAlertDialog } from "./delete-note-alert-dialog";
 import { DisplayTagsOnNoteCard } from "./display-tags";
 import { useParams, useRouter } from "next/navigation";
+
+dayjs.extend(relativeTime);
 
 interface NotebookItemWithContextMenuProps {
   note: Note;
@@ -56,7 +62,7 @@ export function NoteCardWithContextMenu({
           >
             <p className=" font-semibold">{note.name}</p>
             <div className="flex space-x-2 text-muted-foreground">
-              <p>2 hours ago</p>
+              <p>{dayjs(note?.date).fromNow()}</p>
               <div className="space-x-3">
                 <DisplayTagsOnNoteCard tagIds={note.tags} />
               </div>
