@@ -2,13 +2,13 @@
 
 A notion like note taking app that stores all the data in your browser indexdb database.
 
-## Tasks to do
+## Tasks
 
-- make pwa work without internet access
-- display tags badge fix this
-- Mobile ui for sidebar
+- Use next13 features properly.
+- Make pwa work without internet access
+- Display tags badge fix this
+- Separate Sidebar For mobile
 - Add a search bar in sidebar just like notion search with note, tags, notebooks
-- handle the subsidebar if no notebook is selected
 
 ## Credits and Thanks
 
