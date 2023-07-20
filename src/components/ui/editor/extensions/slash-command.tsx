@@ -9,7 +9,6 @@ import React, {
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
-import { useCompletion } from "ai/react";
 import tippy from "tippy.js";
 import {
   Heading1,
@@ -253,43 +252,43 @@ const CommandList = ({
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { complete, isLoading } = useCompletion({
-    id: "novel",
-    api: "/api/generate",
-    onResponse: (response) => {
-      if (response.status === 429) {
-        toast.error("You have reached your request limit for the day.");
-        return;
-      }
-      editor.chain().focus().deleteRange(range).run();
-    },
-    onFinish: (_prompt, completion) => {
-      // highlight the generated text
-      editor.commands.setTextSelection({
-        from: range.from,
-        to: range.from + completion.length,
-      });
-    },
-    onError: () => {
-      toast.error("Something went wrong.");
-    },
-  });
+  // const { complete, isLoading } = useCompletion({
+  //   id: "novel",
+  //   api: "/api/generate",
+  //   onResponse: (response) => {
+  //     if (response.status === 429) {
+  //       toast.error("You have reached your request limit for the day.");
+  //       return;
+  //     }
+  //     editor.chain().focus().deleteRange(range).run();
+  //   },
+  //   onFinish: (_prompt, completion) => {
+  //     // highlight the generated text
+  //     editor.commands.setTextSelection({
+  //       from: range.from,
+  //       to: range.from + completion.length,
+  //     });
+  //   },
+  //   onError: () => {
+  //     toast.error("Something went wrong.");
+  //   },
+  // });
 
-  const selectItem = useCallback(
-    (index: number) => {
-      const item = items[index];
-      if (item) {
-        if (item.title === "Continue writing") {
-          // we're using this for now until we can figure out a way to stream markdown text with proper formatting: https://github.com/steven-tey/novel/discussions/7
-          complete(editor.getText());
-          // complete(editor.storage.markdown.getMarkdown());
-        } else {
-          command(item);
-        }
-      }
-    },
-    [complete, command, editor, items]
-  );
+  // const selectItem = useCallback(
+  //   (index: number) => {
+  //     const item = items[index];
+  //     if (item) {
+  //       if (item.title === "Continue writing") {
+  //         // we're using this for now until we can figure out a way to stream markdown text with proper formatting: https://github.com/steven-tey/novel/discussions/7
+  //         complete(editor.getText());
+  //         // complete(editor.storage.markdown.getMarkdown());
+  //       } else {
+  //         command(item);
+  //       }
+  //     }
+  //   },
+  //   [complete, command, editor, items]
+  // );
 
   useEffect(() => {
     const navigationKeys = ["ArrowUp", "ArrowDown", "Enter"];
@@ -304,10 +303,10 @@ const CommandList = ({
           setSelectedIndex((selectedIndex + 1) % items.length);
           return true;
         }
-        if (e.key === "Enter") {
-          selectItem(selectedIndex);
-          return true;
-        }
+        // if (e.key === "Enter") {
+        //   selectItem(selectedIndex);
+        //   return true;
+        // }
         return false;
       }
     };
@@ -315,7 +314,7 @@ const CommandList = ({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [items, selectedIndex, setSelectedIndex, selectItem]);
+  }, [items, selectedIndex, setSelectedIndex]);
 
   useEffect(() => {
     setSelectedIndex(0);
